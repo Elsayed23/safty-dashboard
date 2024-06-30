@@ -1,0 +1,113 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String           @id @default(uuid())
+  name           String
+  email          String           @unique
+  password       String
+  address        String
+  supervisor     String
+  telephone      String
+  user_photo     String?
+  role           String
+  trainings      Training[]       @relation("UserTrainings")
+  instructions   Training[]       @relation("InstructorTrainings")
+  files          UserFile[]
+  TrainingDetail TrainingDetail[]
+}
+
+model Training {
+  id            String         @id @default(uuid())
+  user_id       String
+  instructor_id String
+  training_id   String
+  user          User?          @relation("UserTrainings", fields: [user_id], references: [id])
+  instructor    User?          @relation("InstructorTrainings", fields: [instructor_id], references: [id])
+  training      TrainingDetail @relation(fields: [training_id], references: [id])
+}
+
+model TrainingDetail {
+  id           String     @id @default(uuid())
+  name         String
+  abbreviation String
+  comments     String?
+  created_by   String?
+  creator      User?      @relation(fields: [created_by], references: [id])
+  trainings    Training[]
+}
+
+model UserFile {
+  id      String @id @default(uuid())
+  link    String
+  user_id String
+  user    User?  @relation(fields: [user_id], references: [id])
+}
+
+model Instrument {
+  id          String         @id @default(uuid())
+  name        String
+  typeId      String
+  type        InstrumentType @relation(fields: [typeId], references: [id])
+  typeOfTests TypeOfTest[]
+  tests       Test[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model InstrumentType {
+  id          String       @id @default(uuid())
+  name        String
+  instruments Instrument[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model TypeOfTest {
+  id           String      @id @default(uuid())
+  name         String
+  instrumentId String
+  instrument   Instrument  @relation(fields: [instrumentId], references: [id])
+  testEntries  TestEntry[]
+  Test         Test[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model TestEntry {
+  id             String     @id @default(uuid())
+  typeOfTestId   String
+  typeOfTest     TypeOfTest @relation(fields: [typeOfTestId], references: [id])
+  typeOfTestName String
+  testCheckName  String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Test {
+  id                String           @id @default(uuid())
+  instrumentId      String
+  instrument        Instrument       @relation(fields: [instrumentId], references: [id])
+  typeOfTestId      String
+  typeOfTest        TypeOfTest       @relation(fields: [typeOfTestId], references: [id])
+  typeOfTestName    String
+  testEntriesChecks TestEntryCheck[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model TestEntryCheck {
+  id            String   @id @default(uuid())
+  testId        String
+  test          Test     @relation(fields: [testId], references: [id])
+  testCheckName String
+  check         Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
