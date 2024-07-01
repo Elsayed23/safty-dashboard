@@ -42,7 +42,7 @@ const ProfileDropdown = () => {
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => { router.push('/profile') }}>
                         <User className="mr-2 h-4 w-4" />
-                        <span>Account</span>
+                        <span>Profile</span>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

@@ -4,8 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 import { NextResponse } from 'next/server';
 
-const generateToken = (userId: string, name: string, email: string, address: string, supervisor: string, telephone: string, role: string, user_photo: string | null) => {
-    return jwt.sign({ id: userId, name, email, address, supervisor, telephone, role, user_photo }, process.env.NEXT_PUBLIC_JWT_SECRET, { expiresIn: '3d' });
+const generateToken = (userId: string, name: string, email: string, address: string, telephone: string, user_photo: string | null) => {
+    return jwt.sign({ id: userId, name, email, address, telephone, user_photo }, process.env.NEXT_PUBLIC_JWT_SECRET, { expiresIn: '3d' });
 };
 
 export async function POST(req: Request) {
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         }
 
         // Generate JWT token
-        const token = generateToken(user.id, user.name, user.email, user.address, user.supervisor, user.telephone, user.role, user.user_photo);
+        const token = generateToken(user.id, user.name, user.email, user.address, user.telephone, user.user_photo);
 
         // Respond with token and user details
         return NextResponse.json({ status: 200, token, user, message: 'Logged in successfully!' });

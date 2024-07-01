@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
                 setToken(storedToken);
                 setUser(parseJwt(storedToken));
                 setIsAuthenticated(true);
-                if (pathname === '/login') {
+                if (pathname === '/login' || pathname === '/register') {
                     router.push('/')
                 } else {
                     router.push(pathname)
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
             if (token) {
                 localStorage.setItem('token', token);
                 setIsAuthenticated(true);
-                if (pathname === '/login') {
+                if (pathname === '/login' || pathname === '/register') {
                     router.push('/')
                 } else {
                     router.push(pathname)

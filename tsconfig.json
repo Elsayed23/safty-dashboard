@@ -34,7 +34,8 @@
     ".next/types/**/*.ts",
     "app/(auth)/login/page.jsx",
     "app/(dashboard)/(routes)/instruments/page.jsx",
-    ".next/types/app/(dashboard)/(routes)/trainings/page.tsx"
+    ".next/types/app/(dashboard)/(routes)/trainings/page.tsx",
+    "app/(dashboard)/(routes)/instruments/[instrumentId]/_components/ImagesSlider.jsx"
   ],
   "exclude": [
     "node_modules"

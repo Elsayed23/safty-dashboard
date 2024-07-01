@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { toast } from 'sonner';
 
 const InstrumentContext = createContext();
 
@@ -19,7 +20,6 @@ export const InstrumentProvider = ({ children }) => {
 
             const { data } = await axios.get('/api/instruments')
             setInstruments(data);
-            console.log(data);
         } catch (error) {
             console.error('Error fetching projects:', error);
         } finally {

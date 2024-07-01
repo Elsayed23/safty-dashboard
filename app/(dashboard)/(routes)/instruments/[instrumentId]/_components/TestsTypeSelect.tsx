@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation"
 const FormSchema = z.object({
   typeOfTest: z
     .string({
-      required_error: "Please select an type of test.",
+      required_error: "Please select an type of inspection.",
     })
 })
 
@@ -94,13 +94,13 @@ const TestsTypeSelect = ({ instrumentID, test_tab }: { instrumentID: string; tes
             render={({ field }) => (
               <FormItem className="w-full">
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl dir="rtl">
+                  <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="اختر نوع الفحص" />
+                      <SelectValue placeholder="Select inspection type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectGroup dir="rtl">
+                    <SelectGroup>
                       {typesOfTestsItem}
                     </SelectGroup>
                   </SelectContent>
@@ -111,14 +111,14 @@ const TestsTypeSelect = ({ instrumentID, test_tab }: { instrumentID: string; tes
           {
             test_tab
               ?
-              <Button disabled={!isValid}>إنشاء الفحص</Button>
+              <Button disabled={!isValid}>Create inspection</Button>
               :
               <ShowData isValid={isValid} checksData={checksData} />
           }
         </form>
       </Form>
       :
-      <h3 className="text-center font-semibold">لا يوجد اي انواع فحوصات</h3>
+      <h3 className="text-center font-semibold">There are no any types of inspections</h3>
   )
 }
 

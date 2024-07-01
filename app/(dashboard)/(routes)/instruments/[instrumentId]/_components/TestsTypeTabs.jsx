@@ -16,8 +16,11 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Button } from "@/components/ui/button"
 import { FaCheck, FaXmark } from "react-icons/fa6"
 import { HiMiniXMark, HiXMark } from "react-icons/hi2"
+import Link from "next/link"
+import Slider from "./ImagesSlider"
+import { useTests } from "@/app/context/TestContext"
 
-const TestsTypeTabs = ({ id, testsData }) => {
+const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
 
 
     const tests = testsData?.map(({ typeOfTestName, testEntriesChecks, createdAt }, idx) => {
@@ -28,7 +31,7 @@ const TestsTypeTabs = ({ id, testsData }) => {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]" dir="rtl">
                     <DialogHeader>
-                        <DialogTitle>نتيجة الفحص</DialogTitle>
+                        <DialogTitle>Inspection result</DialogTitle>
                     </DialogHeader>
                     <ul className="flex flex-col gap-2 list-decimal px-4">
                         {
@@ -40,21 +43,38 @@ const TestsTypeTabs = ({ id, testsData }) => {
                         }
                     </ul>
                     <DialogFooter className="sm:justify-start">
-                        <p>تاريخ الإنشاء: {new Date(createdAt).toLocaleString('ar-EG')}</p>
+                        <p>Date created: {new Date(createdAt).toLocaleString('en-US')}</p>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
         )
     })
 
-    console.log(testsData);
+    const { handleDeleteInstrument } = useTests()
 
     return (
-        <Tabs defaultValue="typesOfTests" dir="rtl" className="w-full sm:w-3/4 md:w-[540px] lg:w-[560px] sm:mx-4">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="tests">الفحوصات</TabsTrigger>
-                <TabsTrigger value="typesOfTests" defaultChecked={true}>انواع الفحوصات</TabsTrigger>
+        <Tabs defaultValue="info" className="w-full sm:w-3/4 md:w-[540px] lg:w-full sm:mx-4">
+            <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="info" defaultChecked={true}>Information</TabsTrigger>
+                <TabsTrigger value="typesOfTests" >Inspection types</TabsTrigger>
+                <TabsTrigger value="tests">Inspection</TabsTrigger>
             </TabsList>
+            <TabsContent value="info">
+                <Card className="py-3">
+                    <div className="flex items-center flex-col gap-5 py-5 pl-16">
+                        <div className="flex flex-col items-center gap-4 ">
+                            <h2 className='text-xl font-semibold'> {instrumentData?.name} </h2>
+                            <h3 className='text-lg font-semibold text-slate-900'>Instrument type: {instrumentData?.type?.name} </h3>
+                            <span className='text-sm'>Added date: {new Date(instrumentData?.createdAt).toLocaleString('en-US')}</span>
+                            <div className="flex items-center gap-9">
+                                <Link href='#tests' className='text-sm underline text-sky-900'>go to inspections</Link>
+                                <Button variant='destructive' onClick={async () => await handleDeleteInstrument(instrumentId)}>Remove instrument</Button>
+                            </div>
+                        </div>
+                        <Slider images={instrumentData?.images} />
+                    </div>
+                </Card>
+            </TabsContent>
             <TabsContent value="typesOfTests">
                 <Card className="flex flex-col items-center gap-9 py-3">
                     <TestsTypeSelect instrumentID={id} />
@@ -68,13 +88,13 @@ const TestsTypeTabs = ({ id, testsData }) => {
                         testsData?.length
                             ?
                             <>
-                                <h3>جميع الفحوصات</h3>
+                                <h3>All Inspections</h3>
                                 <ul className="list-decimal flex flex-col gap-2 self-start ps-10">
                                     {tests}
                                 </ul>
                             </>
                             :
-                            <h3>لا يوجد اي فحوصات مسبقة</h3>
+                            <h3>There is no Inspection yet</h3>
                     }
 
                 </Card>
@@ -84,3 +104,4 @@ const TestsTypeTabs = ({ id, testsData }) => {
 }
 
 export default TestsTypeTabs
+

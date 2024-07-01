@@ -16,3 +16,23 @@ export async function GET() {
         return new NextResponse('Internal Error', { status: 500 })
     }
 }
+
+export async function POST(req: Request) {
+    try {
+
+        const { name } = await req.json()
+
+        const types = await db.instrumentType.create({
+            data: {
+                name
+            }
+        })
+
+        return NextResponse.json(types)
+
+    } catch (error) {
+        console.log("[types]", error);
+        return new NextResponse('Internal Error', { status: 500 })
+    }
+}
+

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 import { HiWrenchScrewdriver } from "react-icons/hi2";
 import { FaTrash } from "react-icons/fa6";
+import { useInstrument } from '@/app/context/InstrumentContext';
 
 const Card = ({
     id,
@@ -14,7 +15,7 @@ const Card = ({
 }) => {
 
     const router = useRouter()
-    const { handleDeleteInstrument } = useTests()
+    const { handleDeleteInstrument } = useInstrument()
 
 
     return (

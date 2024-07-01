@@ -4,7 +4,7 @@ import * as z from 'zod'
 import axios from 'axios'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, CirclePlus } from "lucide-react"
 
 import {
     Form,
@@ -32,6 +32,7 @@ import toast from 'sonner'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useInstrument } from '@/app/context/InstrumentContext'
+import CreateTypeModal from './CreateTypeModal'
 
 
 const formSchema = z.object({
@@ -50,9 +51,23 @@ const Page = () => {
         }
     })
 
+    const { typesData, getInstrumentTypes, instrumentType, setInstrumentType, setInstruments, instruments } = useInstrument()
 
-    const { typesData, getInstrumentTypes, setInstrumentType } = useInstrument()
+    const handleGetTypes = async (id: string) => {
+        const { data } = await axios.get(`/api/instrumentsTypes/${id}`)
+        setInstruments(data)
+    }
 
+    console.log(instruments);
+
+
+    const types = typesData?.map(({ name, id }: { name: string; id: string }, idx: number) => {
+        return (
+            <li key={idx} onClick={() => handleGetTypes(id)} className={`py-2 pl-6 cursor-pointer w-full ${instrumentType === id && 'bg-black bg-opacity-10'} rounded-sm hover:bg-black hover:bg-opacity-10 duration-200`}>
+                {name}
+            </li>
+        )
+    })
 
     useEffect(() => {
         getInstrumentTypes()
@@ -60,53 +75,11 @@ const Page = () => {
 
 
     return (
-        <div className="px-3">
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                    <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={open}
-                        className="w-full justify-between"
-                    >
-                        {value
-                            ? typesData.find((type: any) => type.id === value)?.name
-                            : "select type..."}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                        <CommandInput onChangeCapture={(e) => {
-                            console.log(e)
-                        }} placeholder="Search about instrument type..." />
-                        <CommandList>
-                            <CommandEmpty>No instruments found.</CommandEmpty>
-                            <CommandGroup>
-                                {typesData.map((type: any) => (
-                                    <CommandItem
-                                        key={type.id}
-                                        value={type.id}
-                                        onSelect={(currentValue) => {
-                                            setValue(currentValue === value ? "" : currentValue)
-                                            setInstrumentType(currentValue === value ? "" : currentValue)
-                                            setOpen(false)
-                                        }}
-                                    >
-                                        <Check
-                                            className={cn(
-                                                "mr-2 h-4 w-4",
-                                                value === type.id ? "opacity-100" : "opacity-0"
-                                            )}
-                                        />
-                                        {type.name}
-                                    </CommandItem>
-                                ))}
-                            </CommandGroup>
-                        </CommandList>
-                    </Command>
-                </PopoverContent>
-            </Popover>
+        <div>
+            <ul className="flex flex-col gap-4 p-4">
+                {types}
+            </ul>
+            <CreateTypeModal />
         </div>
     )
 }

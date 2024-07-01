@@ -73,16 +73,16 @@ const CreateTestType = ({ id }: { id: string }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" className=''>إنشاء نوع فحص</Button>
+                <Button variant="outline" className=''>Create a inspection type</Button>
             </DialogTrigger>
-            <DialogContent dir='rtl' className="sm:max-w-[425px]">
-                <DialogHeader className='flex-row-reverse'>
-                    <DialogTitle>إنشاء نوع فحص</DialogTitle>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Create a inspection type</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={onSubmitMainTestName} id='test' className="space-y-5">
                         <FormItem>
-                            <FormLabel>إسم نوع الفحص</FormLabel>
+                            <FormLabel>Name of the inspection type</FormLabel>
                             <FormControl>
                                 <Input {...register("typeOfTestName")} placeholder="اسم نوع الفحص..." />
                             </FormControl>
@@ -91,14 +91,14 @@ const CreateTestType = ({ id }: { id: string }) => {
 
                     <form onSubmit={onSubmitTestChecked} className='space-y-4'>
                         <FormItem>
-                            <FormLabel>إسم الفحص المراد التأكد منه</FormLabel>
+                            <FormLabel>The name of the inspection to be verified</FormLabel>
                             <div className="flex items-center gap-3">
                                 <FormControl>
                                     <Input {...register("testCheckName")} placeholder="اسم الفحص..." />
                                 </FormControl>
                             </div>
                         </FormItem>
-                        <Button type="submit">حفظ الفحص</Button>
+                        <Button type="submit">Save inspection</Button>
                     </form>
 
                     <ul>
@@ -106,7 +106,7 @@ const CreateTestType = ({ id }: { id: string }) => {
                             <li key={index}>{`${entry.testCheckName}`}</li>
                         ))}
                     </ul>
-                    <Button type="submit" form='test' className='w-full'>حفظ</Button>
+                    <Button type="submit" form='test' className='w-full'>Save</Button>
 
                 </Form>
             </DialogContent>

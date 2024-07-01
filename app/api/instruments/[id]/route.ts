@@ -18,7 +18,8 @@ export async function GET(
                     select: {
                         name: true
                     }
-                }
+                },
+                images: true
             }
         })
 

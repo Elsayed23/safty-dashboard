@@ -18,11 +18,11 @@ const ShowData = ({ isValid, checksData }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button type="submit" disabled={!isValid}>إظهار بيانات الفحص</Button>
+                <Button type="submit" disabled={!isValid}>Show inspection data</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" dir="rtl">
                 <DialogHeader>
-                    <DialogTitle>نموذج نوع الفحص</DialogTitle>
+                    <DialogTitle>Inspection type template</DialogTitle>
                 </DialogHeader>
                 <ul className="flex flex-col gap-2 list-decimal px-4">
                     {template}

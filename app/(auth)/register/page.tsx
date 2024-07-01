@@ -1,15 +1,16 @@
-'use client'
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
-import * as z from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { toast } from "sonner"
-import axios from "axios"
-import { useAuth } from "@/app/context/AuthContext"
-
+'use client';
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { toast } from "sonner";
+import axios from "axios";
+import { useAuth } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useState } from 'react';
 
 const formSchema = z.object({
     name: z.string().min(1, { message: "Name is required." }),
@@ -17,15 +18,13 @@ const formSchema = z.object({
     password: z.string().min(4, { message: "Password must be at least 4 characters." }),
     address: z.string().min(1, { message: "Address is required." }),
     telephone: z.string().min(1, { message: "Telephone is required." }),
-    user_photo: z.string().url({ message: "User photo must be a valid URL." }),
+    user_photo: z.any(), // No validation
 });
 
-
 const page = () => {
-
-
-    const { register } = useAuth()
-
+    const { register: registerUser } = useAuth();
+    const router = useRouter();
+    const [file, setFile] = useState<File | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -35,29 +34,43 @@ const page = () => {
             password: '',
             address: '',
             telephone: '',
-            user_photo: '',
+            user_photo: undefined, // Change null to undefined
         },
-    })
+    });
 
-    const { isSubmitting, isValid } = form.formState
+    const { isSubmitting, isValid } = form.formState;
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const { data } = await axios.post('/api/auth/register', values)
+            const formData = new FormData();
+            formData.append('name', values.name);
+            formData.append('email', values.email);
+            formData.append('password', values.password);
+            formData.append('address', values.address);
+            formData.append('telephone', values.telephone);
+            if (file) {
+                formData.append('file', file);
+            }
+
+            const { data } = await axios.post('/api/auth/register', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
             const { status, token, message } = data;
+
             if (status === 200) {
-                register(token)
+                registerUser(token);
+                router.push('/');
             } else {
-                toast.info(message)
+                toast.info(message);
             }
 
         } catch (error) {
-            console.log(error);
-
+            console.error(error);
         }
-
-
-    }
+    };
 
     return (
         <div className="flex min-h-screen px-4 items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -69,7 +82,6 @@ const page = () => {
                             <FormField
                                 control={form.control}
                                 name="name"
-                                disabled={isSubmitting}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Name</FormLabel>
@@ -83,7 +95,6 @@ const page = () => {
                             <FormField
                                 control={form.control}
                                 name="email"
-                                disabled={isSubmitting}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Email</FormLabel>
@@ -97,7 +108,6 @@ const page = () => {
                             <FormField
                                 control={form.control}
                                 name="password"
-                                disabled={isSubmitting}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
@@ -111,7 +121,6 @@ const page = () => {
                             <FormField
                                 control={form.control}
                                 name="address"
-                                disabled={isSubmitting}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Address</FormLabel>
@@ -125,7 +134,6 @@ const page = () => {
                             <FormField
                                 control={form.control}
                                 name="telephone"
-                                disabled={isSubmitting}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Telephone</FormLabel>
@@ -139,12 +147,11 @@ const page = () => {
                             <FormField
                                 control={form.control}
                                 name="user_photo"
-                                disabled={isSubmitting}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Photo URL</FormLabel>
+                                        <FormLabel>Photo</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Photo URL" {...field} />
+                                            <Input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -162,7 +169,7 @@ const page = () => {
                 </p>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default page
+export default page;

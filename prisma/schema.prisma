@@ -13,13 +13,12 @@ model User {
   email          String           @unique
   password       String
   address        String
-  supervisor     String
+  supervisor     String?
   telephone      String
   user_photo     String?
-  role           String
+  role           String?
   trainings      Training[]       @relation("UserTrainings")
   instructions   Training[]       @relation("InstructorTrainings")
-  files          UserFile[]
   TrainingDetail TrainingDetail[]
 }
 
@@ -43,22 +42,34 @@ model TrainingDetail {
   trainings    Training[]
 }
 
-model UserFile {
-  id      String @id @default(uuid())
-  link    String
-  user_id String
-  user    User?  @relation(fields: [user_id], references: [id])
+model Instrument {
+  id                 String             @id @default(uuid())
+  name               String
+  typeId             String
+  place              String
+  customInstrumentId String
+  type               InstrumentType     @relation(fields: [typeId], references: [id])
+  typeOfTests        TypeOfTest[]
+  tests              Test[]
+  files              InstrumentsFiles[] @relation("InstrumentFiles")
+  images             InstrumentImage[]  @relation("InstrumentImages")
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 }
 
-model Instrument {
-  id          String         @id @default(uuid())
-  name        String
-  typeId      String
-  type        InstrumentType @relation(fields: [typeId], references: [id])
-  typeOfTests TypeOfTest[]
-  tests       Test[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+model InstrumentImage {
+  id           String     @id @default(uuid())
+  path         String     @db.LongText
+  instrumentId String
+  instrument   Instrument @relation(fields: [instrumentId], references: [id], name: "InstrumentImages")
+}
+
+model InstrumentsFiles {
+  id           String     @id @default(uuid())
+  name         String
+  path         String
+  instrumentId String
+  instrument   Instrument @relation(fields: [instrumentId], references: [id], name: "InstrumentFiles")
 }
 
 model InstrumentType {

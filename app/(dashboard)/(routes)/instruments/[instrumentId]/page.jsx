@@ -10,7 +10,6 @@ import axios from 'axios'
 
 const page = ({ params: { instrumentId } }) => {
 
-    const { handleDeleteInstrument } = useTests()
 
     const [loading, setLoading] = useState(true)
     const [testsLoading, setTestsLoading] = useState(true)
@@ -34,7 +33,7 @@ const page = ({ params: { instrumentId } }) => {
     const getInstrumentById = async () => {
         try {
             const { data } = await axios.get(`/api/instruments/${instrumentId}`)
-
+            const { images } = data
             setInstrumentData(data)
         } catch (error) {
             console.error('Error fetching instrument:', error);
@@ -55,20 +54,12 @@ const page = ({ params: { instrumentId } }) => {
     return (
 
         <>
-            <div className='h-[calc(100vh-80px)] flex justify-center items-center'>
-                <div className="flex flex-col items-center gap-4 border py-9 px-4 rounded-md">
-                    <h2 className='text-xl font-semibold'> {instrumentData?.name} </h2>
-                    <h3 className='text-lg font-semibold text-slate-900'>نوع المُعدة: {instrumentData?.type?.name} </h3>
-                    <span className='text-sm'>تاريخ الإضافة: {new Date(instrumentData?.createdAt).toLocaleString('ar-EG')}</span>
-                    <div className="flex items-center gap-9">
-                        <Link href='#tests' className='text-sm underline text-sky-900'>إذهب للفحوصات</Link>
-                        <Button variant='destructive' onClick={async () => await handleDeleteInstrument(instrumentId)}>حذف المُعدة</Button>
-                    </div>
+            <div className='h-[calc(100vh-80px)] flex'>
+                <div id='tests' className="flex flex-col w-full px-4 pt-20">
+
+                    <TestsTypeTabs instrumentData={instrumentData} instrumentId={instrumentId} testsData={testsData} id={instrumentId} />
                 </div>
-            </div>
-            <div id='tests' className="flex flex-col px-4 items-center justify-center gap-16 min-h-screen pt-20">
-                <h1 className='text-6xl font-semibold text-center'>الفحوصات</h1>
-                <TestsTypeTabs testsData={testsData} id={instrumentId} />
+
             </div>
         </>
 
