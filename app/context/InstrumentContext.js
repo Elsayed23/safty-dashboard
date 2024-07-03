@@ -1,6 +1,6 @@
 'use client';
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -35,6 +35,11 @@ export const InstrumentProvider = ({ children }) => {
             console.log(error);
         }
     }
+    const pathname = usePathname()
+
+    useEffect(() => {
+        setInstrumentType('')
+    }, [pathname])
 
     const handleCreateInstrument = async (name) => {
         try {

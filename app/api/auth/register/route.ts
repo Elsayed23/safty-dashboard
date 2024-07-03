@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 import { NextResponse } from 'next/server';
 const path = require('path')
 const fs = require('fs')
-const generateToken = (userId: string, name: string, email: string, address: string, telephone: string, user_photo: string | null) => {
-    return jwt.sign({ id: userId, name, email, address, telephone, user_photo }, process.env.NEXT_PUBLIC_JWT_SECRET, { expiresIn: '3d' });
+const generateToken = (userId: string, name: string, work_id: string | null, email: string, address: string, telephone: string, job_title: any, job_title_id: string | null, user_photo: string | null) => {
+    return jwt.sign({ id: userId, name, work_id, email, address, telephone, job_title, job_title_id, user_photo }, process.env.NEXT_PUBLIC_JWT_SECRET, { expiresIn: '3d' });
 };
 
 export async function POST(req: Request) {
@@ -14,9 +14,11 @@ export async function POST(req: Request) {
 
         const name = formData.get("name") as string;
         const email = formData.get("email") as string;
+        const work_id = formData.get("work_id") as string;
         const password = formData.get("password") as string;
         const address = formData.get("address") as string;
         const telephone = formData.get("telephone") as string;
+        const job_titleId = formData.get("job_title_id") as string;
         const file = formData.get("user_photo") as File;
 
         // Check if user already exists
@@ -40,15 +42,21 @@ export async function POST(req: Request) {
         const newUser = await db.user.create({
             data: {
                 name,
+                work_id,
                 email,
                 password: hashedPassword,
                 address,
                 telephone,
+                job_titleId,
                 user_photo: userPhotoPath,
+                roleId: "be1ee4b1-c0a8-4ea9-9cf9-8d998df8249c"
             },
+            include: {
+                job_title: true
+            }
         });
 
-        const token = generateToken(newUser.id, newUser.name, newUser.email, newUser.address, newUser.telephone, newUser.user_photo);
+        const token = generateToken(newUser.id, newUser.name, newUser.work_id, newUser.email, newUser.address, newUser.telephone, newUser.job_title?.title, newUser.job_titleId, newUser.user_photo);
 
         return NextResponse.json({ status: 200, message: 'Registered successfully!', token, user: newUser });
 

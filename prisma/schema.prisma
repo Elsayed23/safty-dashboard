@@ -8,18 +8,70 @@ generator client {
 }
 
 model User {
-  id             String           @id @default(uuid())
-  name           String
-  email          String           @unique
-  password       String
-  address        String
-  supervisor     String?
-  telephone      String
-  user_photo     String?
-  role           String?
-  trainings      Training[]       @relation("UserTrainings")
-  instructions   Training[]       @relation("InstructorTrainings")
-  TrainingDetail TrainingDetail[]
+  id                 String                  @id @default(uuid())
+  name               String
+  work_id            String?
+  email              String                  @unique
+  password           String
+  job_titleId        String?
+  job_title          JobTitle?               @relation(fields: [job_titleId], references: [id])
+  address            String
+  supervisor         String?
+  telephone          String
+  approved           Boolean                 @default(false)
+  violations         Violation[]             @relation("UserViolations")
+  approvedViolations UserViolationApproval[]
+  user_photo         String?                 @db.LongText
+  roleId             String?
+  role               Role?                   @relation(fields: [roleId], references: [id], name: "RoleUsers")
+  trainings          Training[]              @relation("UserTrainings")
+  instructions       Training[]              @relation("InstructorTrainings")
+  TrainingDetail     TrainingDetail[]
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  name      String
+  users     User[]   @relation("RoleUsers")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Violation {
+  id          String                  @id @default(uuid())
+  user_id     String
+  user        User                    @relation("UserViolations", fields: [user_id], references: [id])
+  approvals   UserViolationApproval[]
+  name        String
+  images      ViolationImages[]
+  description String?
+  status      String
+}
+
+model UserViolationApproval {
+  user_id      String
+  violation_id String
+  user         User      @relation(fields: [user_id], references: [id])
+  violation    Violation @relation(fields: [violation_id], references: [id])
+
+  @@id([user_id, violation_id])
+}
+
+model ViolationImages {
+  id           String     @id @default(uuid())
+  path         String     @db.LongText
+  violation_id String
+  violation    Violation? @relation(fields: [violation_id], references: [id])
+}
+
+model JobTitle {
+  id        String   @id @default(uuid())
+  title     String
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Training {

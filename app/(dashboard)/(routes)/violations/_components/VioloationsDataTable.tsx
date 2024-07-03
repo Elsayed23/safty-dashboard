@@ -1,6 +1,6 @@
-"use client"
+'use client';
 
-import * as React from "react"
+import * as React from "react";
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -12,11 +12,11 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -25,8 +25,8 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -34,133 +34,144 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
-import axios from "axios"
-import Loading from "../../../_components/Loading"
-import { useInstrument } from "@/app/context/InstrumentContext"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/table";
+import axios from "axios";
+import Loading from "../../../_components/Loading";
+import { useRouter } from "next/navigation";
 
-export type Instrument = {
-    id: string
-    customInstrumentId: string
-    name: string
-    type: { name: string }
-    place: string
-    createdAt: string
+export type Violation = {
+    id: string;
+    name: string;
+    description?: string;
+    status: string;
+    user: { name: String; work_id: string };
 }
 
-export const columns: ColumnDef<Instrument>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: "customInstrumentId",
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                ID
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => <div>{row.getValue("customInstrumentId")}</div>,
-    },
-    {
-        accessorKey: "name",
-        header: "Name",
-        cell: ({ row }) => <div>{row.getValue("name")}</div>,
-    },
-    {
-        accessorKey: "type",
-        header: () => <div className="text-right">Type</div>,
-        cell: ({ row }) => {
-            const type = row.getValue('type') as { name: string }
-            return <div className="text-right">{type?.name}</div>
-        },
-    },
-    {
-        accessorKey: "place",
-        header: () => <div className="text-right">Place</div>,
-        cell: ({ row }) => <div className="text-right">{row.getValue("place")}</div>,
-    },
-    {
-        accessorKey: "createdAt",
-        header: () => <div className="text-right">Created date</div>,
-        cell: ({ row }) => <div className="text-right">{new Date(row.getValue("createdAt")).toLocaleDateString('en-US')}</div>,
-    },
-    {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-            const instrument = row.original
-            const router = useRouter()
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(instrument.customInstrumentId)}
-                        >
-                            Copy instrument ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => router.push(`/instruments/${instrument.id}`)}>View details</DropdownMenuItem>
-                        <DropdownMenuItem>Edit instrument</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
-    },
-]
-
-const InstrumentDataTable = () => {
-    const [sorting, setSorting] = React.useState<SortingState>([])
+const ViolationsDataTable = () => {
+    const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
-    )
+    );
 
     const router = useRouter()
 
+    const columns: ColumnDef<Violation>[] = [
+        {
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
+        {
+            accessorKey: "user",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    User ID
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => {
+                const user = row.getValue('user') as { work_id: string }
+                return <div>{user?.work_id}</div>
+            },
+        },
+        {
+            accessorKey: "name",
+            header: "User name",
+            cell: ({ row }) => {
+                const user = row.getValue('user') as { name: string }
+                return <div>{user?.name}</div>
+            },
+        },
+        {
+            accessorKey: "name",
+            header: "Violation name",
+            cell: ({ row }) => <div>{row.getValue("name")}</div>,
+        },
+        {
+            accessorKey: "description",
+            header: "Description",
+            cell: ({ row }) => <div>{row.getValue("description")}</div>,
+        },
+        {
+            accessorKey: "status",
+            header: "Status",
+            cell: ({ row }) => <div>{row.getValue("status")}</div>,
+        },
+        {
+            id: "actions",
+            enableHiding: false,
+            cell: ({ row }) => {
+                const violation = row.original;
 
-    const { instruments, getInstruments, loading } = useInstrument()
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => navigator.clipboard.writeText(violation.user.work_id)}
+                            >
+                                Copy User ID
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                );
+            },
+        },
+    ];
 
-    const data = instruments
+    const [data, setData] = React.useState<Violation[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    const getViolations = async () => {
+        try {
+            const { data } = await axios.get('/api/violations');
+            setData(data);
+            setLoading(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    console.log(data);
 
     React.useEffect(() => {
-        getInstruments()
-    }, [])
-
+        getViolations();
+    }, []);
 
     const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState({})
+        React.useState<VisibilityState>({});
+    const [rowSelection, setRowSelection] = React.useState({});
 
     const table = useReactTable({
         data,
@@ -179,19 +190,20 @@ const InstrumentDataTable = () => {
             columnVisibility,
             rowSelection,
         },
-    })
+    });
 
     if (loading) {
-        return <Loading isFull={false} />
+        return <Loading isFull={false} />;
     }
+
     return (
-        <div className="w-full" dir="ltr">
+        <div className="w-full p-6" dir="ltr">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter instrument names..."
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                    placeholder="Filter violations by user ID..."
+                    value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("name")?.setFilterValue(event.target.value)
+                        table.getColumn("id")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />
@@ -217,7 +229,7 @@ const InstrumentDataTable = () => {
                                     >
                                         {column.id}
                                     </DropdownMenuCheckboxItem>
-                                )
+                                );
                             })}
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -237,21 +249,21 @@ const InstrumentDataTable = () => {
                                                     header.getContext()
                                                 )}
                                         </TableHead>
-                                    )
+                                    );
                                 })}
                             </TableRow>
                         ))}
                     </TableHeader>
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row: any) => (
+                            table.getRowModel().rows.map((row) => (
                                 <TableRow
-                                    onClick={() => router.push(`/instruments/${row.original?.id}`)}
                                     key={row.id}
+                                    onClick={() => router.push(`/violations/${row.original.id}`)}
                                     className="cursor-pointer"
                                     data-state={row.getIsSelected() && "selected"}
                                 >
-                                    {row.getVisibleCells().map((cell: any) => (
+                                    {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(
                                                 cell.column.columnDef.cell,
@@ -299,7 +311,7 @@ const InstrumentDataTable = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default InstrumentDataTable
+export default ViolationsDataTable;

@@ -33,6 +33,7 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useInstrument } from '@/app/context/InstrumentContext'
 import CreateTypeModal from './CreateTypeModal'
+import { Skeleton } from '@/components/ui/skeleton'
 
 
 const formSchema = z.object({
@@ -56,9 +57,8 @@ const Page = () => {
     const handleGetTypes = async (id: string) => {
         const { data } = await axios.get(`/api/instrumentsTypes/${id}`)
         setInstruments(data)
+        setInstrumentType(id)
     }
-
-    console.log(instruments);
 
 
     const types = typesData?.map(({ name, id }: { name: string; id: string }, idx: number) => {
@@ -77,7 +77,16 @@ const Page = () => {
     return (
         <div>
             <ul className="flex flex-col gap-4 p-4">
-                {types}
+                {
+                    types?.length
+                        ?
+                        types
+                        :
+                        <>
+                            <Skeleton className='w-full h-5' />
+                            <Skeleton className='w-full h-5' />
+                        </>
+                }
             </ul>
             <CreateTypeModal />
         </div>

@@ -10,14 +10,32 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
     name: z.string().min(1, { message: "Name is required." }),
     email: z.string().email({ message: "Invalid email address." }),
+    work_id: z.string().min(1),
     password: z.string().min(4, { message: "Password must be at least 4 characters." }),
     address: z.string().min(1, { message: "Address is required." }),
     telephone: z.string().min(1, { message: "Telephone is required." }),
+    job_title_id: z.string(),
     user_photo: z.any(), // No validation
 });
 
@@ -25,16 +43,32 @@ const page = () => {
     const { register: registerUser } = useAuth();
     const router = useRouter();
     const [file, setFile] = useState<File | null>(null);
+    const [job_titles, setJob_titles] = useState<any[] | null>(null)
+
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState("");
+
+    const getJobTitles = async () => {
+        const { data } = await axios.get('/api/job_title')
+        setJob_titles(data)
+
+    }
+
+    useEffect(() => {
+        getJobTitles()
+    }, [])
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: '',
             email: '',
+            work_id: '',
             password: '',
             address: '',
             telephone: '',
-            user_photo: undefined, // Change null to undefined
+            job_title_id: '',
+            user_photo: undefined,
         },
     });
 
@@ -45,11 +79,13 @@ const page = () => {
             const formData = new FormData();
             formData.append('name', values.name);
             formData.append('email', values.email);
+            formData.append('work_id', values.work_id);
             formData.append('password', values.password);
             formData.append('address', values.address);
+            formData.append('job_title_id', values.job_title_id);
             formData.append('telephone', values.telephone);
             if (file) {
-                formData.append('file', file);
+                formData.append('user_photo', file);
             }
 
             const { data } = await axios.post('/api/auth/register', formData, {
@@ -61,8 +97,8 @@ const page = () => {
             const { status, token, message } = data;
 
             if (status === 200) {
-                registerUser(token);
-                router.push('/');
+                // registerUser(token);
+                toast.success('Successfully registered')
             } else {
                 toast.info(message);
             }
@@ -87,6 +123,19 @@ const page = () => {
                                         <FormLabel>Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Name" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="work_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>ID</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="ID..." {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -144,6 +193,56 @@ const page = () => {
                                     </FormItem>
                                 )}
                             />
+                            <div className="space-y-2">
+                                <Label>Job Title</Label>
+                                <Popover open={open} onOpenChange={setOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={open}
+                                            className="w-full justify-between"
+                                        >
+                                            {value
+                                                ? job_titles?.find((type: any) => type.id === value)?.title
+                                                : "select job title..."}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[200px] p-0">
+                                        <Command>
+                                            <CommandInput
+                                                onChangeCapture={(e) => {
+                                                    console.log(e);
+                                                }} placeholder="Search about job title..." />
+                                            <CommandList>
+                                                <CommandEmpty>No job titles found.</CommandEmpty>
+                                                <CommandGroup>
+                                                    {job_titles?.map((type: any) => (
+                                                        <CommandItem
+                                                            key={type.id}
+                                                            value={type.id}
+                                                            onSelect={(currentValue) => {
+                                                                setValue(currentValue === value ? "" : currentValue);
+                                                                form.setValue('job_title_id', currentValue === value ? "" : currentValue);
+                                                                setOpen(false);
+                                                            }}
+                                                        >
+                                                            <Check
+                                                                className={cn(
+                                                                    "mr-2 h-4 w-4",
+                                                                    value === type.id ? "opacity-100" : "opacity-0"
+                                                                )}
+                                                            />
+                                                            {type.title}
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
                             <FormField
                                 control={form.control}
                                 name="user_photo"

@@ -13,9 +13,11 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { MdPeople } from "react-icons/md";
 import { usePathname, useRouter } from "next/navigation";
 import InstrumentsDropdown from '@/app/(dashboard)/(routes)/_components/InstrumentsDropdown'
+import { RiFilePaper2Fill } from "react-icons/ri";
+import { FaUsers } from "react-icons/fa6";
 
 const SidebarRoutes = () => {
 
@@ -23,21 +25,30 @@ const SidebarRoutes = () => {
 
     const pathname = usePathname()
 
-    const inspectionRoutes = [
-        {
-            icon: HiOutlineWrenchScrewdriver,
-            isAvtiveIcon: HiWrenchScrewdriver,
-            label: 'Instruments',
-            href: '/instruments'
-        },
-    ]
-
     const routes = [
+        {
+            icon: FaUsers,
+            isAvtiveIcon: FaUsers,
+            label: 'Users',
+            href: '/users'
+        },
         {
             icon: FaPersonChalkboard,
             isAvtiveIcon: FaPersonChalkboard,
             label: 'Trainings',
             href: '/trainings'
+        },
+        {
+            icon: MdPeople,
+            isAvtiveIcon: MdPeople,
+            label: 'Trainees',
+            href: '/trainees'
+        },
+        {
+            icon: RiFilePaper2Fill,
+            isAvtiveIcon: RiFilePaper2Fill,
+            label: 'Violations',
+            href: '/violations'
         },
     ]
 

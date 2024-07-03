@@ -1,26 +1,44 @@
 const { PrismaClient } = require('@prisma/client')
-
+require('dotenv').config()  // Add this line to load environment variables
 
 const database = new PrismaClient();
 
 async function main() {
-    try {
-        await database.instrumentType.createMany({
-            data: [
-                { name: 'نوع 1' },
-                { name: 'نوع 1' },
-                { name: 'نوع 3' },
-                { name: 'نوع 4' },
-            ]
-        })
+    // Define roles and job titles
+    const roles = ['Instructor', 'Officer', 'Supervisor', 'Engineer', 'Admin']
+    const jobTitles = ['Instructor', 'Officer', 'Supervisor', 'Engineer']
 
-        console.log('Successs');
+    // Create roles
+    const roleData = roles.map(role => ({
+        name: role,
+    }))
 
-    } catch (error) {
-        console.log('Error seeding the Database categories', error);
-    } finally {
-        await database.$disconnect()
-    }
+    // Create job titles
+    const jobTitleData = jobTitles.map(title => ({
+        title: title,
+    }))
+
+    // Insert roles
+    const createdRoles = await database.role.createMany({
+        data: roleData,
+        skipDuplicates: true,
+    })
+
+    // Insert job titles
+    const createdJobTitles = await database.jobTitle.createMany({
+        data: jobTitleData,
+        skipDuplicates: true,
+    })
+
+    console.log(`${createdRoles.count} roles created`)
+    console.log(`${createdJobTitles.count} job titles created`)
 }
 
 main()
+    .catch(e => {
+        console.error(e)
+        process.exit(1)
+    })
+    .finally(async () => {
+        await database.$disconnect()
+    })

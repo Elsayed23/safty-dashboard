@@ -141,6 +141,7 @@ const page = () => {
     }
   }
 
+
   React.useEffect(() => {
     getTrainings()
   }, [])
