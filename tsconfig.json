@@ -37,7 +37,7 @@
     ".next/types/app/(dashboard)/(routes)/trainings/page.tsx",
     "app/(dashboard)/(routes)/instruments/[instrumentId]/_components/ImagesSlider.jsx",
     "app/(dashboard)/(routes)/trainees/page.jsx",
-    "app/(dashboard)/(routes)/violations/[violationId]/page.jsx",
+    "app/(dashboard)/(routes)/violations/[violationId]/page.tsx",
     "app/(dashboard)/(routes)/users/page.jsx"
   ],
   "exclude": [

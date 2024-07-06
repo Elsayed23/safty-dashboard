@@ -34,11 +34,45 @@ async function main() {
     console.log(`${createdJobTitles.count} job titles created`)
 }
 
-main()
+async function clearDataBase() {
+    // Disable foreign key checks
+    await database.$executeRaw`SET FOREIGN_KEY_CHECKS = 0`;
+
+    // Get all table names
+    const tables = await database.$queryRaw`
+    SELECT table_name 
+    FROM information_schema.tables 
+    WHERE table_schema = DATABASE();
+  `;
+
+    // Delete data from all tables
+    for (const { table_name } of tables) {
+        try {
+            await database.$executeRawUnsafe(`DELETE FROM \`${table_name}\``);
+        } catch (error) {
+            console.error(`Error deleting data from table ${table_name}:`, error);
+        }
+    }
+
+    // Re-enable foreign key checks
+    await database.$executeRaw`SET FOREIGN_KEY_CHECKS = 1`;
+}
+
+clearDataBase()
     .catch(e => {
-        console.error(e)
-        process.exit(1)
+        console.error(e);
+        process.exit(1);
     })
     .finally(async () => {
-        await database.$disconnect()
-    })
+        await database.$disconnect();
+        main()
+            .catch(e => {
+                console.error(e)
+                process.exit(1)
+            })
+            .finally(async () => {
+                await database.$disconnect()
+            })
+
+    });
+

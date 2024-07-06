@@ -40,6 +40,7 @@ import Loading from "../../../_components/Loading"
 import AddTrainingModal from "./AddTrainingModal"
 import AddViolationModal from './AddViolationModal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useAuth } from "@/app/context/AuthContext"
 
 export type Violation = {
     id: string
@@ -64,6 +65,9 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
     )
+
+    const { user } = useAuth()
+
     const [addTrainingModal, setAddTrainingModal] = React.useState({
         status: false,
         user_id: ''
@@ -191,9 +195,14 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
                                 Copy trainee Id
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => setAddTrainingModal({ status: true, user_id: training.id })}>
-                                Add training
-                            </DropdownMenuItem>
+                            {
+                                user?.role.name === 'Instructor' || user?.role.name === 'Admin'
+                                &&
+                                <DropdownMenuItem onClick={() => setAddTrainingModal({ status: true, user_id: training.id })}>
+                                    Add training
+                                </DropdownMenuItem>
+                            }
+
 
                             <DropdownMenuItem onClick={() => setAddViolationModal({ status: true, user_id: training.id })}>
                                 Add violation

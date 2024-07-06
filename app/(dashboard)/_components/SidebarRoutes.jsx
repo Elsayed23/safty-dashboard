@@ -4,7 +4,7 @@ import { IoDocument } from "react-icons/io5";
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { HiWrenchScrewdriver } from "react-icons/hi2";
 import { FaHouse, FaPersonChalkboard } from "react-icons/fa6";
-import React from 'react'
+import React, { useEffect } from 'react'
 import SideItems from './SideItems'
 import {
     Accordion,
@@ -18,20 +18,17 @@ import { usePathname, useRouter } from "next/navigation";
 import InstrumentsDropdown from '@/app/(dashboard)/(routes)/_components/InstrumentsDropdown'
 import { RiFilePaper2Fill } from "react-icons/ri";
 import { FaUsers } from "react-icons/fa6";
+import { useAuth } from "@/app/context/AuthContext";
 
 const SidebarRoutes = () => {
 
     const router = useRouter()
 
+    const { user } = useAuth()
+
     const pathname = usePathname()
 
     const routes = [
-        {
-            icon: FaUsers,
-            isAvtiveIcon: FaUsers,
-            label: 'Users',
-            href: '/users'
-        },
         {
             icon: FaPersonChalkboard,
             isAvtiveIcon: FaPersonChalkboard,
@@ -51,6 +48,20 @@ const SidebarRoutes = () => {
             href: '/violations'
         },
     ]
+
+
+
+    if (user?.role?.name === 'Admin') {
+        routes.push({
+            icon: FaUsers,
+            isAvtiveIcon: FaUsers,
+            label: 'Users',
+            href: '/users'
+        }
+        )
+    }
+
+
 
 
 

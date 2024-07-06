@@ -38,6 +38,7 @@ import {
 import AddTraninings from "./_components/AddTraniningsModal"
 import axios from "axios"
 import Loading from "../../_components/Loading"
+import { useAuth } from "@/app/context/AuthContext"
 
 export type Training = {
   name: string
@@ -127,6 +128,7 @@ const page = () => {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
+  const { user } = useAuth()
 
   const [data, setData] = React.useState<Training[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -172,10 +174,16 @@ const page = () => {
   if (loading) {
     return <Loading isFull={false} />
   }
-
   return (
     <div className="w-full p-6" dir="ltr">
-      <AddTraninings getTrainings={getTrainings} />
+
+
+      {
+        user?.role.name === 'Instructor' || user?.role.name === 'Admin'
+        &&
+        <AddTraninings getTrainings={getTrainings} />
+      }
+
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter training names..."

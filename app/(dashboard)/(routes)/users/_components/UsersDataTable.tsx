@@ -69,6 +69,8 @@ const UsersDataTable = () => {
         setRole_id(role_id)
     }
 
+    const router = useRouter()
+
     const handleApproved = async (user_id: string) => {
         try {
             await axios.patch('/api/approve', { user_id })
@@ -168,6 +170,11 @@ const UsersDataTable = () => {
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
+                                onClick={() => { router.push(`/profile/${user.id}`) }}
+                            >
+                                User profile
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
                                 onClick={() => { handleApproved(user.id) }}
                             >
                                 Approved
@@ -189,8 +196,6 @@ const UsersDataTable = () => {
 
     const getUsers = async () => {
         const { data } = await axios.get('/api/users')
-        console.log(data);
-
         setData(data)
         setLoading(false)
     }

@@ -20,12 +20,15 @@ import Link from "next/link"
 import Slider from "../../../../_components/ImagesSlider";
 import { useTests } from "@/app/context/TestContext"
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/app/context/AuthContext";
 
 const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
     const [files, setFiles] = useState([]);
     const [filePreviews, setFilePreviews] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [fileNames, setFileNames] = useState({});
+
+    const { user } = useAuth()
 
     useEffect(() => {
         // Fetch files for the specific instrument
@@ -139,7 +142,6 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
                             <h3 className='text-lg font-semibold text-slate-900'>Instrument type: {instrumentData?.type?.name} </h3>
                             <span className='text-sm'>Added date: {new Date(instrumentData?.createdAt).toLocaleString('en-US')}</span>
                             <div className="flex items-center gap-9">
-                                <Link href='#tests' className='text-sm underline text-sky-900'>go to inspections</Link>
                                 <Button variant='destructive' onClick={async () => await handleDeleteInstrument(instrumentId)}>Remove instrument</Button>
                             </div>
                         </div>
@@ -150,7 +152,13 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
             <TabsContent value="typesOfTests">
                 <Card className="flex flex-col items-center gap-9 py-3">
                     <TestsTypeSelect instrumentID={id} />
-                    <CreateTestType id={id} />
+                    {
+                        user?.role?.name === 'Admin' || user?.role?.name === 'Engineer'
+                            ?
+                            <CreateTestType id={id} />
+                            :
+                            ''
+                    }
                 </Card>
             </TabsContent>
             <TabsContent value="tests">

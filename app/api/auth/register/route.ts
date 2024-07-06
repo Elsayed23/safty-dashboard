@@ -10,6 +10,19 @@ const generateToken = (userId: string, name: string, work_id: string | null, ema
 
 export async function POST(req: Request) {
     try {
+
+        const url = new URL(req.url);
+
+        const params = url.searchParams;
+        const paramsObject: { [key: string]: string } = {};
+        params.forEach((value, key) => {
+            paramsObject[key] = value;
+        });
+
+        const { approved } = paramsObject;
+
+        const isApproved = approved ? true : false
+
         const formData = await req.formData();
 
         const name = formData.get("name") as string;
@@ -46,10 +59,11 @@ export async function POST(req: Request) {
                 email,
                 password: hashedPassword,
                 address,
+                approved: isApproved,
                 telephone,
                 job_titleId,
                 user_photo: userPhotoPath,
-                roleId: "be1ee4b1-c0a8-4ea9-9cf9-8d998df8249c"
+                roleId: "caed3200-ec86-4058-8d1e-de70e7343fcb"
             },
             include: {
                 job_title: true

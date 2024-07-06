@@ -27,6 +27,7 @@ model User {
   trainings          Training[]              @relation("UserTrainings")
   instructions       Training[]              @relation("InstructorTrainings")
   TrainingDetail     TrainingDetail[]
+  comments           ViolationsComments[]    @relation("UserComments")
   createdAt          DateTime                @default(now())
   updatedAt          DateTime                @updatedAt
 }
@@ -48,6 +49,20 @@ model Violation {
   images      ViolationImages[]
   description String?
   status      String
+  comments    ViolationsComments[]    @relation("ViolationComments")
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+}
+
+model ViolationsComments {
+  id          String    @id @default(uuid())
+  comment     String
+  commentedBy String
+  user        User      @relation("UserComments", fields: [commentedBy], references: [id])
+  violationId String
+  violation   Violation @relation("ViolationComments", fields: [violationId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model UserViolationApproval {
@@ -55,6 +70,8 @@ model UserViolationApproval {
   violation_id String
   user         User      @relation(fields: [user_id], references: [id])
   violation    Violation @relation(fields: [violation_id], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@id([user_id, violation_id])
 }
@@ -82,6 +99,8 @@ model Training {
   user          User?          @relation("UserTrainings", fields: [user_id], references: [id])
   instructor    User?          @relation("InstructorTrainings", fields: [instructor_id], references: [id])
   training      TrainingDetail @relation(fields: [training_id], references: [id])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model TrainingDetail {
@@ -92,6 +111,8 @@ model TrainingDetail {
   created_by   String?
   creator      User?      @relation(fields: [created_by], references: [id])
   trainings    Training[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model Instrument {

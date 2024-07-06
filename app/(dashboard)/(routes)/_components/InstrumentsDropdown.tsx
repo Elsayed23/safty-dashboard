@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils'
 import { useInstrument } from '@/app/context/InstrumentContext'
 import CreateTypeModal from './CreateTypeModal'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useAuth } from '@/app/context/AuthContext'
 
 
 const formSchema = z.object({
@@ -52,13 +53,20 @@ const Page = () => {
         }
     })
 
+    const [loading, setLoading] = useState(true)
+
+    const { user } = useAuth()
+
     const { typesData, getInstrumentTypes, instrumentType, setInstrumentType, setInstruments, instruments } = useInstrument()
 
     const handleGetTypes = async (id: string) => {
         const { data } = await axios.get(`/api/instrumentsTypes/${id}`)
         setInstruments(data)
         setInstrumentType(id)
+        setLoading(false)
     }
+
+    console.log();
 
 
     const types = typesData?.map(({ name, id }: { name: string; id: string }, idx: number) => {
@@ -73,12 +81,11 @@ const Page = () => {
         getInstrumentTypes()
     }, [])
 
-
     return (
         <div>
             <ul className="flex flex-col gap-4 p-4">
                 {
-                    types?.length
+                    !loading || typesData
                         ?
                         types
                         :
@@ -88,7 +95,13 @@ const Page = () => {
                         </>
                 }
             </ul>
-            <CreateTypeModal />
+            {
+                user?.role?.name === 'Admin' || user?.role?.name === 'Engineer'
+                    ?
+                    <CreateTypeModal />
+                    :
+                    ''
+            }
         </div>
     )
 }

@@ -47,7 +47,6 @@ const CreateTypeModal = () => {
         },
     });
 
-    const [isOpen, setIsOpen] = useState(false)
 
     const { register, handleSubmit } = form;
 
@@ -65,7 +64,7 @@ const CreateTypeModal = () => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button onClick={() => setIsOpen(true)} className='bg-transparent border-[#FE5000] text-[#FE5000] uppercase ml-10 flex items-center gap-2 hover:bg-transparent'>Add type  <CirclePlus size={18} /></Button>
+                <Button className='bg-transparent border-[#FE5000] text-[#FE5000] uppercase ml-10 flex items-center gap-2 hover:bg-transparent'>Add type  <CirclePlus size={18} /></Button>
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-[425px]">

@@ -44,16 +44,16 @@ export type Violation = {
     name: string;
     description?: string;
     status: string;
-    user: { name: String; work_id: string };
+    user: { name: string; work_id: string };
 }
 
 const ViolationsDataTable = () => {
     const [sorting, setSorting] = React.useState<SortingState>([]);
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    );
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+    const [data, setData] = React.useState<Violation[]>([]);
+    const [loading, setLoading] = React.useState(true);
 
-    const router = useRouter()
+    const router = useRouter();
 
     const columns: ColumnDef<Violation>[] = [
         {
@@ -95,7 +95,7 @@ const ViolationsDataTable = () => {
             },
         },
         {
-            accessorKey: "name",
+            accessorKey: "user.name",
             header: "User name",
             cell: ({ row }) => {
                 const user = row.getValue('user') as { name: string }
@@ -151,9 +151,6 @@ const ViolationsDataTable = () => {
         },
     ];
 
-    const [data, setData] = React.useState<Violation[]>([]);
-    const [loading, setLoading] = React.useState(true);
-
     const getViolations = async () => {
         try {
             const { data } = await axios.get('/api/violations');
@@ -163,14 +160,12 @@ const ViolationsDataTable = () => {
             console.log(error);
         }
     };
-    console.log(data);
 
     React.useEffect(() => {
         getViolations();
     }, []);
 
-    const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({});
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
 
     const table = useReactTable({
@@ -201,9 +196,9 @@ const ViolationsDataTable = () => {
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter violations by user ID..."
-                    value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("user")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("id")?.setFilterValue(event.target.value)
+                        table.getColumn("user")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />

@@ -36,6 +36,20 @@ CREATE TABLE `Violation` (
     `name` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
     `status` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ViolationsComments` (
+    `id` VARCHAR(191) NOT NULL,
+    `comment` VARCHAR(191) NOT NULL,
+    `commentedBy` VARCHAR(191) NOT NULL,
+    `violationId` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -44,6 +58,8 @@ CREATE TABLE `Violation` (
 CREATE TABLE `UserViolationApproval` (
     `user_id` VARCHAR(191) NOT NULL,
     `violation_id` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`user_id`, `violation_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -73,6 +89,8 @@ CREATE TABLE `Training` (
     `user_id` VARCHAR(191) NOT NULL,
     `instructor_id` VARCHAR(191) NOT NULL,
     `training_id` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -84,6 +102,8 @@ CREATE TABLE `TrainingDetail` (
     `abbreviation` VARCHAR(191) NOT NULL,
     `comments` VARCHAR(191) NULL,
     `created_by` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -185,6 +205,12 @@ ALTER TABLE `User` ADD CONSTRAINT `User_roleId_fkey` FOREIGN KEY (`roleId`) REFE
 
 -- AddForeignKey
 ALTER TABLE `Violation` ADD CONSTRAINT `Violation_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ViolationsComments` ADD CONSTRAINT `ViolationsComments_commentedBy_fkey` FOREIGN KEY (`commentedBy`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ViolationsComments` ADD CONSTRAINT `ViolationsComments_violationId_fkey` FOREIGN KEY (`violationId`) REFERENCES `Violation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `UserViolationApproval` ADD CONSTRAINT `UserViolationApproval_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

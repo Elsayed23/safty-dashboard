@@ -7,7 +7,7 @@ const page = () => {
 
     return (
         <div className="flex flex-col gap-5 p-6">
-            <Link href='/users/add'>
+            <Link href='/users/add' className='w-fit'>
                 <Button className='flex bg-[#FE5000] hover:bg-[#fe5000e1] items-center self-start gap-1'>Add user</Button>
             </Link>
             <UsersDataTable />
