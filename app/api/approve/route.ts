@@ -1,9 +1,9 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function PATCH(
+export const PATCH = async (
     req: Request
-) {
+) => {
     try {
 
         const { user_id } = await req.json()

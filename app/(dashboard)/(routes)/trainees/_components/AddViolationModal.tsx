@@ -100,7 +100,7 @@ const AddViolation: React.FC<AddViolationModalProps> = ({ isOpen, onClose, user_
         defaultValues: {
             name: '',
             description: '',
-            status: 'Pending',
+            status: 'red',
             images: [],
             approvals: [{ user_id: user?.id || '' }]
         }

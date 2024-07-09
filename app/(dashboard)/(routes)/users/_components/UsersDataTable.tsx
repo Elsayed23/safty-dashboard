@@ -40,6 +40,7 @@ import Loading from "../../../_components/Loading";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ModifyRole from "./ModifyRoleModal";
+import Supervisor from "./SupervisorModal";
 
 export type User = {
     id: string;
@@ -47,9 +48,13 @@ export type User = {
     job_title: { title: string };
     role: { name: string };
     work_id: string;
-    roleId: string
-    approved: any
-}
+    roleId: string;
+    approved: any;
+    supervisors: Array<{
+        supervisorId: string;
+    }>;
+};
+
 
 const UsersDataTable = () => {
     const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -57,16 +62,25 @@ const UsersDataTable = () => {
         []
     );
 
-    const [isOpen, setIsOpen] = React.useState(false)
+    const [isOpenRoleModal, setIsOpenRoleModal] = React.useState(false)
+    const [isOpenSupervisorModal, setIsOpenSupervisorModal] = React.useState(false)
     const [user_id, setUser_id] = React.useState('')
     const [role_id, setRole_id] = React.useState('')
+    const [supervisor_id, setSupervisor_id] = React.useState('')
     const [isRoleModifiedDone, setIsRoleModifiedDone] = React.useState(false)
+    const [isSupervisorDone, setIsSupervisorDone] = React.useState(false)
     const [isApproved, setIsApproved] = React.useState(false)
 
     const handleModifyRole = (user_id: string, role_id: string) => {
-        setIsOpen(true)
+        setIsOpenRoleModal(true)
         setUser_id(user_id)
         setRole_id(role_id)
+    }
+
+    const handleSupervisor = (user_id: string, supervisor_id: any) => {
+        setIsOpenSupervisorModal(true)
+        setUser_id(user_id)
+        setSupervisor_id(supervisor_id)
     }
 
     const router = useRouter()
@@ -177,12 +191,17 @@ const UsersDataTable = () => {
                             <DropdownMenuItem
                                 onClick={() => { handleApproved(user.id) }}
                             >
-                                Approved
+                                Approve
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => { handleModifyRole(user.id, user.roleId) }}
                             >
                                 Modify Role
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => { handleSupervisor(user.id, user?.supervisors[0]?.supervisorId) }}
+                            >
+                                Supervisor
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -196,13 +215,15 @@ const UsersDataTable = () => {
 
     const getUsers = async () => {
         const { data } = await axios.get('/api/users')
+        console.log(data);
+
         setData(data)
         setLoading(false)
     }
 
     React.useEffect(() => {
         getUsers()
-    }, [isRoleModifiedDone, isApproved])
+    }, [isRoleModifiedDone, isApproved, isSupervisorDone])
 
 
     const [columnVisibility, setColumnVisibility] =
@@ -345,7 +366,8 @@ const UsersDataTable = () => {
                     </Button>
                 </div>
             </div>
-            <ModifyRole isOpen={isOpen} user_id={user_id} setIsRoleModifiedDone={setIsRoleModifiedDone} role_id={role_id} onClose={() => setIsOpen(false)} />
+            <ModifyRole isOpen={isOpenRoleModal} user_id={user_id} setIsRoleModifiedDone={setIsRoleModifiedDone} role_id={role_id} onClose={() => setIsOpenRoleModal(false)} />
+            <Supervisor isOpen={isOpenSupervisorModal} setIsSupervisorDone={setIsSupervisorDone} supervisor_id={supervisor_id} user_id={user_id} onClose={() => setIsOpenSupervisorModal(false)} />
         </div>
     );
 };

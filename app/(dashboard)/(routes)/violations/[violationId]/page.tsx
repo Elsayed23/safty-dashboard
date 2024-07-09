@@ -36,6 +36,7 @@ const page = ({ params: { violationId } }: { params: { violationId: string } }) 
   const [violationData, setViolationData] = useState<any>(null)
   const [isEditStatus, setIsEditStatus] = useState(false)
   const [comments, setComments] = useState<any[] | null>(null)
+  const [isApprovedByUser, setIsApprovedByUser] = useState<any>(null)
 
   const toggleEdit = () => setIsEditStatus(prev => !prev)
 
@@ -45,9 +46,25 @@ const page = ({ params: { violationId } }: { params: { violationId: string } }) 
     try {
       const { data } = await axios.get(`/api/violations/${violationId}`)
       setViolationData(data)
+      console.log(data);
+
     } catch (error) {
       console.log(error);
     }
+  }
+
+  const handleApproveViolationByUser = async () => {
+
+    const dataSend = {
+      violation_id: violationId,
+      user_id: violationData?.user_id
+    }
+
+    const { data } = await axios.patch('/api/violations/approve', dataSend)
+
+    console.log(data);
+
+
   }
 
   const getComments = async () => {
@@ -59,7 +76,22 @@ const page = ({ params: { violationId } }: { params: { violationId: string } }) 
 
     }
   }
-  console.log(comments);
+
+
+  useEffect(() => {
+    if (violationData) {
+      const data = violationData?.approvals?.map((approval: any) => {
+        return approval?.user?.id === violationData?.user_id
+      })
+
+      if (data?.includes(true)) {
+        setIsApprovedByUser(true)
+      } else {
+        setIsApprovedByUser(false)
+      }
+
+    }
+  }, [violationData])
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -81,8 +113,10 @@ const page = ({ params: { violationId } }: { params: { violationId: string } }) 
 
       await axios.post('/api/violations/comments', dataSend)
       form.reset({ ...form.getValues(), comment: '' });
+      getComments()
 
       toast.success('Commented')
+
     } catch (error) {
       console.log(error);
 
@@ -91,16 +125,16 @@ const page = ({ params: { violationId } }: { params: { violationId: string } }) 
   }
 
   const commentList = comments?.length === 0 ? (
-    <p className="text-gray-600">No comments available.</p>
+    <p className="text-gray-600 mt-5">No comments available.</p>
   ) : (
-    <ul className="space-y-4 mb-6">
+    <ul className="space-y-4 my-6">
       {comments?.map((comment, idx) => (
         <CommentCard key={idx} {...comment} />
       ))}
     </ul>
   );
 
-  if (!violationData) {
+  if (!violationData || !comments) {
     return <Loading isFull={false} />
   }
 
@@ -113,6 +147,13 @@ const page = ({ params: { violationId } }: { params: { violationId: string } }) 
           <Image src={violationData?.user?.user_photo} alt='user_photo' width={128} height={128} className='w-32 h-32 rounded-full border' />
           <h2>{violationData?.user?.name} | {violationData?.user?.job_title?.title}</h2>
         </div>
+        <p className='text-slate-800 text-sm'>{isApprovedByUser ? 'The violation approved by user' : 'The violation was not approved by the user'}</p>
+        {
+          violationData?.user_id === user?.id && !isApprovedByUser
+          &&
+          <Button onClick={handleApproveViolationByUser}>Approve violation</Button>
+
+        }
         <h2 className='text-xl font-semibold'> {violationData?.name} </h2>
         <p className='font-medium text-slate-900 max-w-lg'><span className='font-semibold'>Description</span>: {violationData?.description} </p>
         {

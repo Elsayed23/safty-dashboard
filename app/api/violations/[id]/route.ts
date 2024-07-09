@@ -18,7 +18,8 @@ export async function GET(
                     select: {
                         user: {
                             select: {
-                                name: true
+                                name: true,
+                                id: true
                             }
                         }
                     }

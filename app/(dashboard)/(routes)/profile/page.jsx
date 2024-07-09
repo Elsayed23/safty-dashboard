@@ -71,6 +71,12 @@ const page = () => {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-3">
+                                <h3 className='text-lg font-semibold'>Supervisor</h3>
+                                <div className="pl-4 flex items-center gap-4 py-4 border-t">
+                                    <h3 className='text-sm font-medium tracking-wide'>{user?.supervisor[0]?.supervisor?.name ? user?.supervisor[0]?.supervisor?.name : 'no supervisor'}</h3>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-3">
                                 <h3 className='text-lg font-semibold'>Email addresses</h3>
                                 <div className="pl-4 flex items-center gap-4 py-4 border-t">
                                     <h3 className='text-sm font-medium tracking-wide'>{user?.email}</h3>

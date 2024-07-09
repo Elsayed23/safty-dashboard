@@ -1,12 +1,12 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import TraineesDataTable from './_components/TraineesDataTable'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import axios from 'axios'
 
 const page = () => {
 
-  const [jobTitleId, setJobTitleId] = useState('')
+  const [jobTitleId, setJobTitleId] = useState('all')
   const [jobTitles, setJobTitles] = useState(null)
 
   const getJobTitles = async () => {
@@ -14,7 +14,7 @@ const page = () => {
     setJobTitles(() => {
       return [
         {
-          id: '',
+          id: 'all',
           title: 'All'
         },
         ...data

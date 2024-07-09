@@ -109,7 +109,9 @@ const AddTraninings = ({ getTrainings }: { getTrainings: () => void }) => {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">save</Button>
+                        <DialogClose>
+                            <Button type="submit">save</Button>
+                        </DialogClose>
                     </form>
                 </Form>
             </DialogContent>

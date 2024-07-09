@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import path from 'path';
 import fs from 'fs';
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
     try {
         const formData = await req.formData();
         const instrumentId = formData.get("instrumentId") as string;

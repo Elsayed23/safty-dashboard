@@ -1,6 +1,6 @@
 import React from 'react'
 import SidebarRoutes from './SidebarRoutes'
-import logo from '@/app/assets/images/logo.webp'
+import logo from '../../assets/images/logo.png'
 import Image from 'next/image'
 
 const Sidebar = () => {

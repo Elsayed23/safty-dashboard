@@ -4,11 +4,11 @@ const jwt = require('jsonwebtoken');
 import { NextResponse } from 'next/server';
 const path = require('path')
 const fs = require('fs')
-const generateToken = (userId: string, name: string, work_id: string | null, email: string, address: string, telephone: string, job_title: any, job_title_id: string | null, user_photo: string | null) => {
-    return jwt.sign({ id: userId, name, work_id, email, address, telephone, job_title, job_title_id, user_photo }, process.env.NEXT_PUBLIC_JWT_SECRET, { expiresIn: '3d' });
+const generateToken = (userId: string, name: string, work_id: string | null, email: string, address: string, telephone: string, supervisor: any, job_title: any, job_title_id: string | null, user_photo: string | null) => {
+    return jwt.sign({ id: userId, name, work_id, email, address, telephone, supervisor, job_title, job_title_id, user_photo }, process.env.NEXT_PUBLIC_JWT_SECRET, { expiresIn: '3d' });
 };
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
     try {
 
         const url = new URL(req.url);
@@ -63,14 +63,24 @@ export async function POST(req: Request) {
                 telephone,
                 job_titleId,
                 user_photo: userPhotoPath,
-                roleId: "caed3200-ec86-4058-8d1e-de70e7343fcb"
+                roleId: "a5b74386-9e57-4108-8263-bf7575974b9e"
             },
             include: {
-                job_title: true
+                job_title: true,
+                supervisors: {
+                    select: {
+                        supervisor: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        }
+                    }
+                }
             }
         });
 
-        const token = generateToken(newUser.id, newUser.name, newUser.work_id, newUser.email, newUser.address, newUser.telephone, newUser.job_title?.title, newUser.job_titleId, newUser.user_photo);
+        const token = generateToken(newUser.id, newUser.name, newUser.work_id, newUser.email, newUser.address, newUser.telephone, newUser.supervisors, newUser.job_title?.title, newUser.job_titleId, newUser.user_photo);
 
         return NextResponse.json({ status: 200, message: 'Registered successfully!', token, user: newUser });
 

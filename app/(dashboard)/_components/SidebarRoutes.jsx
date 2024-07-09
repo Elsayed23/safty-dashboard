@@ -1,5 +1,5 @@
 'use client'
-import { IoDocumentOutline } from "react-icons/io5";
+import { IoDocumentOutline, IoLocationSharp } from "react-icons/io5";
 import { IoDocument } from "react-icons/io5";
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { HiWrenchScrewdriver } from "react-icons/hi2";
@@ -19,6 +19,7 @@ import InstrumentsDropdown from '@/app/(dashboard)/(routes)/_components/Instrume
 import { RiFilePaper2Fill } from "react-icons/ri";
 import { FaUsers } from "react-icons/fa6";
 import { useAuth } from "@/app/context/AuthContext";
+import { FaPencilRuler } from "react-icons/fa";
 
 const SidebarRoutes = () => {
 
@@ -34,6 +35,12 @@ const SidebarRoutes = () => {
             isAvtiveIcon: FaPersonChalkboard,
             label: 'Trainings',
             href: '/trainings'
+        },
+        {
+            icon: IoLocationSharp,
+            isAvtiveIcon: IoLocationSharp,
+            label: 'Information',
+            href: '/information'
         },
         {
             icon: MdPeople,
@@ -52,7 +59,14 @@ const SidebarRoutes = () => {
 
 
     if (user?.role?.name === 'Admin') {
-        routes.push({
+        routes.unshift({
+            icon: FaPencilRuler,
+            isAvtiveIcon: FaPencilRuler,
+            label: 'Job titles',
+            href: '/job_titles'
+        }
+        )
+        routes.unshift({
             icon: FaUsers,
             isAvtiveIcon: FaUsers,
             label: 'Users',

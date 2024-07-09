@@ -109,7 +109,7 @@ const ModifyRole: React.FC<ModifyRoleModalProps> = ({ isOpen, onClose, user_id, 
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle >Add Training</DialogTitle>
+                    <DialogTitle>Modify role</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

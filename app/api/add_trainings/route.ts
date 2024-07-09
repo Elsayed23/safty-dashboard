@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
     try {
         const { instructor_id, training_id, user_id } = await req.json()
         console.log(instructor_id, training_id, user_id);

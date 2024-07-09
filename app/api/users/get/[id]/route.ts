@@ -8,9 +8,6 @@ export async function GET(
     try {
 
         const { id } = params
-        console.log(id);
-
-
 
         const user = await db.user.findFirst({
             where: {
@@ -19,6 +16,16 @@ export async function GET(
             include: {
                 job_title: true,
                 role: true,
+                supervisors: {
+                    select: {
+                        supervisor: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        }
+                    }
+                }
             }
         })
         return NextResponse.json(user)

@@ -8,28 +8,41 @@ generator client {
 }
 
 model User {
-  id                 String                  @id @default(uuid())
-  name               String
-  work_id            String?
-  email              String                  @unique
-  password           String
-  job_titleId        String?
-  job_title          JobTitle?               @relation(fields: [job_titleId], references: [id])
-  address            String
-  supervisor         String?
-  telephone          String
-  approved           Boolean                 @default(false)
-  violations         Violation[]             @relation("UserViolations")
-  approvedViolations UserViolationApproval[]
-  user_photo         String?                 @db.LongText
-  roleId             String?
-  role               Role?                   @relation(fields: [roleId], references: [id], name: "RoleUsers")
-  trainings          Training[]              @relation("UserTrainings")
-  instructions       Training[]              @relation("InstructorTrainings")
-  TrainingDetail     TrainingDetail[]
-  comments           ViolationsComments[]    @relation("UserComments")
-  createdAt          DateTime                @default(now())
-  updatedAt          DateTime                @updatedAt
+  id                        String                  @id @default(uuid())
+  name                      String
+  work_id                   String?
+  email                     String                  @unique
+  password                  String
+  job_titleId               String?
+  job_title                 JobTitle?               @relation(fields: [job_titleId], references: [id])
+  address                   String
+  telephone                 String
+  supervisors               Supervisor[]            @relation("UserSupervisors")
+  subordinates              Supervisor[]            @relation("UserSubordinates")
+  approved                  Boolean                 @default(false)
+  violations                Violation[]             @relation("UserViolations")
+  approvedViolations        UserViolationApproval[]
+  user_photo                String?                 @db.LongText
+  roleId                    String?
+  role                      Role?                   @relation(fields: [roleId], references: [id], name: "RoleUsers")
+  trainings                 Training[]              @relation("UserTrainings")
+  instructions              Training[]              @relation("InstructorTrainings")
+  TrainingDetail            TrainingDetail[]
+  pins                      Pin[]                   @relation("UserPins")
+  comments                  ViolationsComments[]    @relation("UserComments")
+  general_data_supervisor   GeneralData[]           @relation("SupervisorData")
+  general_data_site_manager GeneralData[]           @relation("SiteManagerData")
+  createdAt                 DateTime                @default(now())
+  updatedAt                 DateTime                @updatedAt
+}
+
+model Supervisor {
+  userId       String
+  supervisorId String
+  user         User   @relation("UserSupervisors", fields: [userId], references: [id])
+  supervisor   User   @relation("UserSubordinates", fields: [supervisorId], references: [id])
+
+  @@id([userId, supervisorId])
 }
 
 model Role {
@@ -71,7 +84,7 @@ model UserViolationApproval {
   user         User      @relation(fields: [user_id], references: [id])
   violation    Violation @relation(fields: [violation_id], references: [id])
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  updatedAt    DateTime  @default(now())
 
   @@id([user_id, violation_id])
 }
@@ -192,6 +205,30 @@ model TestEntryCheck {
   test          Test     @relation(fields: [testId], references: [id])
   testCheckName String
   check         Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Pin {
+  id        String   @id @default(uuid())
+  lat       Float
+  lng       Float
+  icon      String
+  name      String
+  data      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], name: "UserPins")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model GeneralData {
+  id            String   @id @default(uuid())
+  name          String
+  supervisorId  String
+  siteManagerId String
+  supervisor    User     @relation("SupervisorData", fields: [supervisorId], references: [id])
+  siteManager   User     @relation("SiteManagerData", fields: [siteManagerId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

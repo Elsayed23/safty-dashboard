@@ -50,21 +50,27 @@ export type Violation = {
     status: string
 }
 
+export type Abbreviation = {
+    training: {
+        abbreviation: string
+        id: string
+        name: string
+    }
+
+}
+
 export type Training = {
     id: string
     name: string
     job_title: { title: string }
     work_id: string
     violations: Violation[]
+    trainings: Abbreviation[]
 }
-
-
 
 const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
 
     const { user } = useAuth()
 
@@ -74,12 +80,10 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
     })
 
     const onCloseTraining = () => {
-        setAddTrainingModal(prevData => {
-            return {
-                ...prevData,
-                status: false
-            }
-        })
+        setAddTrainingModal(prevData => ({
+            ...prevData,
+            status: false
+        }))
     }
 
     const [addViolationModal, setAddViolationModal] = React.useState({
@@ -88,12 +92,10 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
     })
 
     const onCloseViolation = () => {
-        setAddViolationModal(prevData => {
-            return {
-                ...prevData,
-                status: false
-            }
-        })
+        setAddViolationModal(prevData => ({
+            ...prevData,
+            status: false
+        }))
     }
 
     const columns: ColumnDef<Training>[] = [
@@ -153,22 +155,46 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
                 return (
                     <div className="text-right flex items-center justify-end gap-2">
                         {
-                            violations.map((_, idx) => {
-                                return (
-                                    <TooltipProvider key={idx} delayDuration={200}>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <div className={`w-3 h-3 rounded-full cursor-default bg-red-800`}></div>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Not approved yet</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                )
-                            })
+                            violations.map((_, idx) => (
+                                <TooltipProvider key={idx} delayDuration={200}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className={`w-3 h-3 rounded-full cursor-default bg-red-800`}></div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Not approved yet</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            ))
                         }
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: "trainings",
+            header: () => <div className="text-right">Trainings</div>,
+            cell: ({ row }) => {
+                const abbreviations = row.getValue('trainings') as Abbreviation[]
+                console.log(abbreviations);
 
+                return (
+                    <div className="text-right flex items-center justify-end gap-2">
+                        {
+                            abbreviations.map(({ training }, idx) => (
+                                <TooltipProvider key={idx} delayDuration={200}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="text-right">{training.abbreviation}</div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{training.name}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            ))
+                        }
                     </div>
                 )
             },
@@ -196,13 +222,11 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             {
-                                user?.role.name === 'Instructor' || user?.role.name === 'Admin'
-                                &&
+                                (user?.role.name === 'Instructor' || user?.role.name === 'Admin') &&
                                 <DropdownMenuItem onClick={() => setAddTrainingModal({ status: true, user_id: training.id })}>
                                     Add training
                                 </DropdownMenuItem>
                             }
-
 
                             <DropdownMenuItem onClick={() => setAddViolationModal({ status: true, user_id: training.id })}>
                                 Add violation
@@ -221,6 +245,7 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
         try {
             const { data } = await axios.get(`/api/users/${jobTitleId}`)
             setData(data)
+            console.log(data);
             setLoading(false)
         } catch (error) {
             console.log(error);
@@ -231,8 +256,7 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
         getTrainings()
     }, [jobTitleId])
 
-    const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({})
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
@@ -279,20 +303,18 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
                         {table
                             .getAllColumns()
                             .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                )
-                            })}
+                            .map((column) => (
+                                <DropdownMenuCheckboxItem
+                                    key={column.id}
+                                    className="capitalize"
+                                    checked={column.getIsVisible()}
+                                    onCheckedChange={(value) =>
+                                        column.toggleVisibility(!!value)
+                                    }
+                                >
+                                    {column.id}
+                                </DropdownMenuCheckboxItem>
+                            ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -301,18 +323,16 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                        </TableHead>
-                                    )
-                                })}
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </TableHead>
+                                ))}
                             </TableRow>
                         ))}
                     </TableHeader>

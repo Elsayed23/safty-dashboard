@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET(
+export const GET = async (
     req: Request,
     { params }: { params: { id: string } }
-) {
+) => {
     try {
 
         const { id } = params

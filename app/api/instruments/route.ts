@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 const path = require('path')
 const fs = require('fs')
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
     try {
         const formData = await req.formData();
 
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 }
 
 
-export async function GET() {
+export const GET = async () => {
     try {
 
         const instruments = await db.instrument.findMany({
