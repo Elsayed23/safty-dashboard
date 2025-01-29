@@ -94,7 +94,7 @@ const ModifyRole: React.FC<ModifyRoleModalProps> = ({ isOpen, onClose, user_id, 
         try {
 
             await axios.patch('/api/roles', { ...values, user_id: user_id })
-
+            onClose()
             toast.success('Modified role')
             setIsRoleModifiedDone((prev: boolean) => !prev)
         } catch (error) {
@@ -161,9 +161,7 @@ const ModifyRole: React.FC<ModifyRoleModalProps> = ({ isOpen, onClose, user_id, 
                                 </Command>
                             </PopoverContent>
                         </Popover>
-                        <DialogClose asChild>
-                            <Button type="submit">save</Button>
-                        </DialogClose>
+                        <Button type="submit">save</Button>
                     </form>
                 </Form>
             </DialogContent>

@@ -4,8 +4,9 @@ const jwt = require('jsonwebtoken');
 import { NextResponse } from 'next/server';
 const path = require('path')
 const fs = require('fs')
+
 const generateToken = (userId: string, name: string, work_id: string | null, email: string, address: string, telephone: string, supervisor: any, job_title: any, job_title_id: string | null, user_photo: string | null) => {
-    return jwt.sign({ id: userId, name, work_id, email, address, telephone, supervisor, job_title, job_title_id, user_photo }, process.env.NEXT_PUBLIC_JWT_SECRET, { expiresIn: '3d' });
+    return jwt.sign({ id: userId, name, work_id, email, address, telephone, supervisor, job_title, job_title_id, user_photo }, process.env.JWT_SECRET, { expiresIn: '3d' });
 };
 
 export const POST = async (req: Request) => {
@@ -63,7 +64,7 @@ export const POST = async (req: Request) => {
                 telephone,
                 job_titleId,
                 user_photo: userPhotoPath,
-                roleId: "a5b74386-9e57-4108-8263-bf7575974b9e"
+                roleId: '318d0584-542d-4068-8fd2-f606a3b0b91b'
             },
             include: {
                 job_title: true,

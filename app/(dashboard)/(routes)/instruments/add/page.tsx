@@ -12,6 +12,8 @@ import {
     FormControl,
     FormField,
     FormItem,
+    FormLabel,
+    FormMessage,
 } from '@/components/ui/form';
 import {
     Input
@@ -35,6 +37,13 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useInstrument } from '@/app/context/InstrumentContext';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 const formSchema = z.object({
     name: z.string().min(1, {
@@ -42,7 +51,9 @@ const formSchema = z.object({
     }),
     typeId: z.string().min(1),
     place: z.string().min(1),
-    customInstrumentId: z.string().min(1)
+    customInstrumentId: z.string().min(1),
+    internalExaminationDuration: z.string().min(1),
+    externalExaminationDuration: z.string().min(1)
 });
 
 const thumbsContainer = {
@@ -90,7 +101,9 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
             name: '',
             typeId: instrument_type_id,
             place: '',
-            customInstrumentId: ''
+            customInstrumentId: '',
+            internalExaminationDuration: '',
+            externalExaminationDuration: ''
         }
     });
 
@@ -138,6 +151,8 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
         formData.append('typeId', values.typeId);
         formData.append('place', values.place);
         formData.append('customInstrumentId', values.customInstrumentId);
+        formData.append('internalExaminationDuration', values.internalExaminationDuration);
+        formData.append('externalExaminationDuration', values.externalExaminationDuration);
         files.forEach((file) => {
             formData.append('images', file);
         });
@@ -296,7 +311,54 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
                                 {thumbs}
                             </aside>
                         </div>
-
+                        <div className="flex items-center gap-3">
+                            <FormField
+                                control={form.control}
+                                name="internalExaminationDuration"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Internal Examination Duration</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select the duration" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="daily">Daily</SelectItem>
+                                                <SelectItem value="weekly">Weekly</SelectItem>
+                                                <SelectItem value="monthly">Monthly</SelectItem>
+                                                <SelectItem value="biannual">Biannual</SelectItem>
+                                                <SelectItem value="annual">Annual</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="externalExaminationDuration"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>External Examination Duration</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select the duration" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="monthly">Monthly</SelectItem>
+                                                <SelectItem value="biannual">Biannual</SelectItem>
+                                                <SelectItem value="annual">Annual</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                         <div className='flex justify-between items-center gap-2 mt-4'>
                             <Button onClick={() => { router.push('/instruments') }} variant='destructive'>Cancel</Button>
                             <Button

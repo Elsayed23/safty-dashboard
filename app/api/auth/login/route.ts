@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 import { NextResponse } from 'next/server';
 
 const generateToken = (userId: string, name: string, work_id: string | null, email: string, address: string, telephone: string, supervisor: any, job_title: any, job_title_id: string | null, role: any, user_photo: string | null) => {
-    return jwt.sign({ id: userId, name, work_id, email, address, telephone, supervisor, job_title, job_title_id, role, user_photo }, process.env.NEXT_PUBLIC_JWT_SECRET, { expiresIn: '3d' });
+    return jwt.sign({ id: userId, name, work_id, email, address, telephone, supervisor, job_title, job_title_id, role, user_photo }, process.env.JWT_SECRET, { expiresIn: '3d' });
 };
 
 export const POST = async (req: Request) => {

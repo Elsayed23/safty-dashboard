@@ -73,6 +73,16 @@ export const columns: ColumnDef<Instrument>[] = [
         enableHiding: false,
     },
     {
+        accessorKey: "num",
+        header: "Num",
+        cell: ({ row, table }) => {
+            const filteredRows = table.getFilteredRowModel().rows;
+            const rowIndex = filteredRows.findIndex((filteredRow) => filteredRow.id === row.id);
+            return <div>{rowIndex + 1}</div>;
+        },
+    },
+
+    {
         accessorKey: "customInstrumentId",
         header: ({ column }) => (
             <Button

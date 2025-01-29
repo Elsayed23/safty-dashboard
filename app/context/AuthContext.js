@@ -1,6 +1,5 @@
 'use client';
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import jwt_decode from 'jwt-decode';
 import { usePathname, useRouter } from 'next/navigation';
 
 const AuthContext = createContext();

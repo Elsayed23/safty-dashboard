@@ -12,6 +12,11 @@ export const POST = async (req: Request) => {
         const place = formData.get("place") as string;
         const customInstrumentId = formData.get("customInstrumentId") as string;
         const files = formData.getAll("images") as File[];
+        const internalExaminationDuration = formData.get("internalExaminationDuration") as string || undefined;
+        const externalExaminationDuration = formData.get("externalExaminationDuration") as string || undefined;
+
+        // internalExaminationDuration
+        // externalExaminationDuration
 
         // Create new instrument
         const instrument = await db.instrument.create({
@@ -20,8 +25,8 @@ export const POST = async (req: Request) => {
                 typeId,
                 place,
                 customInstrumentId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                internalExaminationDuration,
+                externalExaminationDuration
             },
         });
 

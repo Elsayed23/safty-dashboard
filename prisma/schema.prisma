@@ -129,25 +129,27 @@ model TrainingDetail {
 }
 
 model Instrument {
-  id                 String             @id @default(uuid())
-  name               String
-  typeId             String
-  place              String
-  customInstrumentId String
-  type               InstrumentType     @relation(fields: [typeId], references: [id])
-  typeOfTests        TypeOfTest[]
-  tests              Test[]
-  files              InstrumentsFiles[] @relation("InstrumentFiles")
-  images             InstrumentImage[]  @relation("InstrumentImages")
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  id                          String             @id @default(uuid())
+  name                        String
+  typeId                      String
+  place                       String
+  customInstrumentId          String
+  type                        InstrumentType     @relation(fields: [typeId], references: [id])
+  typeOfTests                 TypeOfTest[]
+  tests                       Test[]
+  internalExaminationDuration String?
+  externalExaminationDuration String?
+  files                       InstrumentsFiles[] @relation("InstrumentFiles")
+  images                      InstrumentImage[]  @relation("InstrumentImages")
+  createdAt                   DateTime           @default(now())
+  updatedAt                   DateTime           @updatedAt
 }
 
 model InstrumentImage {
   id           String     @id @default(uuid())
   path         String     @db.LongText
   instrumentId String
-  instrument   Instrument @relation(fields: [instrumentId], references: [id], name: "InstrumentImages")
+  instrument   Instrument @relation(fields: [instrumentId], references: [id], name: "InstrumentImages", onDelete: Cascade)
 }
 
 model InstrumentsFiles {
@@ -155,7 +157,7 @@ model InstrumentsFiles {
   name         String
   path         String
   instrumentId String
-  instrument   Instrument @relation(fields: [instrumentId], references: [id], name: "InstrumentFiles")
+  instrument   Instrument @relation(fields: [instrumentId], references: [id], name: "InstrumentFiles", onDelete: Cascade)
 }
 
 model InstrumentType {
@@ -170,7 +172,7 @@ model TypeOfTest {
   id           String      @id @default(uuid())
   name         String
   instrumentId String
-  instrument   Instrument  @relation(fields: [instrumentId], references: [id])
+  instrument   Instrument  @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
   testEntries  TestEntry[]
   Test         Test[]
   createdAt    DateTime    @default(now())
@@ -178,21 +180,22 @@ model TypeOfTest {
 }
 
 model TestEntry {
-  id             String     @id @default(uuid())
-  typeOfTestId   String
-  typeOfTest     TypeOfTest @relation(fields: [typeOfTestId], references: [id])
-  typeOfTestName String
-  testCheckName  String
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  id                      String     @id @default(uuid())
+  typeOfTestId            String
+  typeOfTest              TypeOfTest @relation(fields: [typeOfTestId], references: [id])
+  typeOfTestName          String
+  testCheckName           String
+  isVerifiedImageRequired Boolean    @default(false)
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
 }
 
 model Test {
   id                String           @id @default(uuid())
   instrumentId      String
-  instrument        Instrument       @relation(fields: [instrumentId], references: [id])
+  instrument        Instrument       @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
   typeOfTestId      String
-  typeOfTest        TypeOfTest       @relation(fields: [typeOfTestId], references: [id])
+  typeOfTest        TypeOfTest       @relation(fields: [typeOfTestId], references: [id], onDelete: Cascade)
   typeOfTestName    String
   testEntriesChecks TestEntryCheck[]
   createdAt         DateTime         @default(now())

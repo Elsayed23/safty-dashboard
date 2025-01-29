@@ -21,6 +21,7 @@ import Slider from "../../../../_components/ImagesSlider";
 import { useTests } from "@/app/context/TestContext"
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/app/context/AuthContext";
+import { useInstrument } from "@/app/context/InstrumentContext";
 
 const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
     const [files, setFiles] = useState([]);
@@ -29,6 +30,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
     const [fileNames, setFileNames] = useState({});
 
     const { user } = useAuth()
+    console.log(instrumentData);
 
     useEffect(() => {
         // Fetch files for the specific instrument
@@ -124,7 +126,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
         )
     });
 
-    const { handleDeleteInstrument } = useTests();
+    const { handleDeleteInstrument } = useInstrument();
 
     return (
         <Tabs defaultValue="info" className="w-full sm:w-3/4 md:w-[540px] lg:w-full">
@@ -138,8 +140,11 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
                 <Card className="py-3 flex flex-col">
                     <div className="flex items-center min-h-[calc(100vh-234px)] flex-col gap-5 py-5 px-4">
                         <div className="flex flex-col items-center gap-4 ">
-                            <h2 className='text-xl font-semibold'> {instrumentData?.name} </h2>
+                            <h2 className='text-xl font-semibold'> {instrumentData?.name}</h2>
+
                             <h3 className='text-lg font-semibold text-slate-900'>Instrument type: {instrumentData?.type?.name} </h3>
+                            <h2 className='text-xl font-semibold'>Internal examination duration: {instrumentData?.internalExaminationDuration}</h2>
+                            <h2 className='text-xl font-semibold'>External examination duration: {instrumentData?.externalExaminationDuration}</h2>
                             <span className='text-sm'>Added date: {new Date(instrumentData?.createdAt).toLocaleString('en-US')}</span>
                             <div className="flex items-center gap-9">
                                 <Button variant='destructive' onClick={async () => await handleDeleteInstrument(instrumentId)}>Remove instrument</Button>

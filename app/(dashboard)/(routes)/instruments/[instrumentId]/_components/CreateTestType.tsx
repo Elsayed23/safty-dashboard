@@ -27,12 +27,14 @@ import { useRouter } from 'next/navigation';
 const formSchema = z.object({
     typeOfTestName: z.string().min(1, 'عليك إضافة حقل اسم نوع الفحص ي هندسة'),
     testCheckName: z.string().min(0, 'Please enter at least one character.'),
+    isVerifiedImageRequired: z.boolean(),
 });
 
 // Define the interface for form values based on the schema
 interface FormValues {
     typeOfTestName: string;
     testCheckName: string;
+    isVerifiedImageRequired: boolean;
 }
 
 const CreateTestType = ({ id }: { id: string }) => {
@@ -48,25 +50,29 @@ const CreateTestType = ({ id }: { id: string }) => {
         defaultValues: {
             typeOfTestName: '',
             testCheckName: "",
+            isVerifiedImageRequired: false,
         },
     });
 
-    const { register, handleSubmit, reset } = form;
+    const { register, handleSubmit, setValue, watch, reset } = form;
 
-    const onSubmitMainTestName = handleSubmit(({ typeOfTestName }: FormValues) => {
+    const isVerifiedRequired = watch('isVerifiedImageRequired');
+
+
+    const onSubmitMainTestName = handleSubmit(({ typeOfTestName, isVerifiedImageRequired }: FormValues) => {
         handleCreateTypeOfText({
             name: typeOfTestName,
             testEntries,
-            instrumentId: id
+            instrumentId: id,
         });
-        reset({ ...form.getValues(), testCheckName: '', typeOfTestName: '' });
+        reset({ ...form.getValues(), testCheckName: '', typeOfTestName: '', isVerifiedImageRequired: false });
         setIsAddTypeOfText(false)
         setTestEntries([])
     });
 
     const onSubmitTestChecked = handleSubmit((data: FormValues) => {
         setTestEntries(prev => [...prev, data]);
-        reset({ ...form.getValues(), testCheckName: '' });
+        reset({ ...form.getValues(), testCheckName: '', isVerifiedImageRequired: false });
         setIsAddTypeOfText(false)
     });
 
@@ -92,10 +98,23 @@ const CreateTestType = ({ id }: { id: string }) => {
                     <form onSubmit={onSubmitTestChecked} className='space-y-4'>
                         <FormItem>
                             <FormLabel>The name of the inspection to be verified</FormLabel>
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col gap-2">
                                 <FormControl>
                                     <Input {...register("testCheckName")} placeholder="اسم الفحص..." />
                                 </FormControl>
+                                <FormItem>
+                                    <div className="flex items-center gap-1">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={isVerifiedRequired}
+                                                onCheckedChange={(checked: boolean) =>
+                                                    setValue("isVerifiedImageRequired", checked)
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormLabel className='cursor-pointer'>Image verification required</FormLabel>
+                                    </div>
+                                </FormItem>
                             </div>
                         </FormItem>
                         <Button type="submit">Save inspection</Button>
