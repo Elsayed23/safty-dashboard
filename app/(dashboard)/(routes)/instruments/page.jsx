@@ -19,7 +19,14 @@ const page = () => {
             {
                 instrumentType
                 &&
-                <Button variant='default' onClick={() => router.push(`/instruments/add?instrument_type_id=${instrumentType}`)} className='flex bg-[#FE5000] hover:bg-[#fe5000e1] items-center self-start gap-1'>Add instruments <CirclePlus size={18} /></Button>
+                <div className="flex items-center gap-3">
+                    <Button variant='default' onClick={() => router.push(`/instruments/add?instrument_type_id=${instrumentType}`)} className='flex bg-[#FE5000] hover:bg-[#fe5000e1] items-center self-start gap-1'>
+                        Add instruments <CirclePlus size={18} />
+                    </Button>
+                    <Button variant='outline' onClick={() => router.push(`/instruments/type/${instrumentType}/typeoftests`)} className='flex items-center self-start gap-1'>
+                        Add type of test <CirclePlus size={18} />
+                    </Button>
+                </div>
             }
             <InstrumentDataTable />
         </div>

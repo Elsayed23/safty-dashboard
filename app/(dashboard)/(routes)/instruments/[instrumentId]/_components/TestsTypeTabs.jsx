@@ -30,7 +30,6 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
     const [fileNames, setFileNames] = useState({});
 
     const { user } = useAuth()
-    console.log(instrumentData);
 
     useEffect(() => {
         // Fetch files for the specific instrument
@@ -160,7 +159,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
                     {
                         user?.role?.name === 'Admin' || user?.role?.name === 'Engineer'
                             ?
-                            <CreateTestType id={id} />
+                            <CreateTestType instrumentId={id} />
                             :
                             ''
                     }

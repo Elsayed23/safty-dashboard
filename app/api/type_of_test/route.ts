@@ -4,12 +4,13 @@ import { NextApiRequest } from 'next'
 
 export async function POST(req: Request) {
     try {
-        const { name, instrumentId, testEntries } = await req.json()
+        const { name, instrumentId, instrumentTypeId, testEntries } = await req.json()
 
         const typeOfTest = await db.typeOfTest.create({
             data: {
                 name,
                 instrumentId,
+                instrumentTypeId,
                 testEntries: {
                     create: testEntries
                 }
@@ -31,18 +32,37 @@ export async function GET(req: NextRequest) {
     try {
 
         const instrumentId = req.nextUrl.searchParams.get('instrumentId')
+        const instrumentTypeId = req.nextUrl.searchParams.get('instrumentTypeId')
 
-        const typeOfTests = await db.typeOfTest.findMany({
-            where: {
-                instrumentId: instrumentId as string
-            },
-            include: {
-                testEntries: true,
-                Test: true
-            }
-        })
+        if (instrumentId != 'null') {
+            const typeOfTests = await db.typeOfTest.findMany({
+                where: {
+                    instrumentId: instrumentId as string
+                },
+                include: {
+                    testEntries: true,
+                    Test: true
+                }
+            })
 
-        return NextResponse.json(typeOfTests)
+            return NextResponse.json(typeOfTests)
+        } else {
+            console.log('testtt');
+
+            const typeOfTests = await db.typeOfTest.findMany({
+                where: {
+                    instrumentTypeId: instrumentTypeId as string
+                },
+                include: {
+                    testEntries: true,
+                    Test: true
+                }
+            })
+
+            return NextResponse.json(typeOfTests)
+        }
+
+
 
     } catch (error) {
         console.log("[typeOfTest]", error);

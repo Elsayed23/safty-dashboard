@@ -36,12 +36,7 @@ const SidebarRoutes = () => {
             label: 'Trainings',
             href: '/trainings'
         },
-        {
-            icon: IoLocationSharp,
-            isAvtiveIcon: IoLocationSharp,
-            label: 'Information',
-            href: '/information'
-        },
+
         {
             icon: MdPeople,
             isAvtiveIcon: MdPeople,
@@ -75,8 +70,26 @@ const SidebarRoutes = () => {
         )
     }
 
-
-
+    const informationRoutes = [
+        {
+            icon: IoLocationSharp,
+            isAvtiveIcon: IoLocationSharp,
+            label: 'General data',
+            href: '/information/general_data'
+        },
+        {
+            icon: IoLocationSharp,
+            isAvtiveIcon: IoLocationSharp,
+            label: 'Layout',
+            href: '/information/layout'
+        }
+    ]
+    // {
+    //     icon: IoLocationSharp,
+    //     isAvtiveIcon: IoLocationSharp,
+    //     label: 'Information',
+    //     href: '/information'
+    // },
 
 
     return (
@@ -88,7 +101,6 @@ const SidebarRoutes = () => {
                             <IoDocument size={23} className='text-[#ec7831]' />
                             Inspection
                         </div>
-
                     </AccordionTrigger>
                     <AccordionContent className="w-full">
                         <InstrumentsDropdown />
@@ -100,6 +112,25 @@ const SidebarRoutes = () => {
                     return <SideItems key={idx} {...routes} />
                 })
             }
+            <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                    <AccordionTrigger className='py-0 relative hover:no-underline text-[#ec7831] px-6 hover:text-[#fe5000ce] hover:bg-[#ec7831] hover:bg-opacity-10 duration-300'>
+                        <div className={`flex items-center gap-2  py-4`}>
+                            <IoLocationSharp size={23} className='text-[#ec7831]' />
+                            Information
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="w-full">
+                        {
+                            informationRoutes.map((routes, idx) => {
+                                return <div className="pl-4">
+                                    <SideItems key={idx} {...routes} />
+                                </div>
+                            })
+                        }
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </div>
     )
 }

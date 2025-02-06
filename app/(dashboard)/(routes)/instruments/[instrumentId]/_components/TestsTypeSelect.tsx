@@ -37,7 +37,7 @@ const FormSchema = z.object({
 
 
 
-const TestsTypeSelect = ({ instrumentID, test_tab }: { instrumentID: string; test_tab: boolean }) => {
+const TestsTypeSelect = ({ instrumentID, instrumentTypeID, test_tab }: { instrumentID: any; instrumentTypeID: any; test_tab: boolean }) => {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -45,18 +45,18 @@ const TestsTypeSelect = ({ instrumentID, test_tab }: { instrumentID: string; tes
 
   const [checksData, setChecksData] = useState<[]>([])
 
-
-
   const router = useRouter()
 
   const { isValid } = form.formState
 
   const { typeOfTests, handleGetTypeTest } = useTests()
 
+  console.log(typeOfTests);
+
 
 
   const getTypeOfTestsData = async () => {
-    await handleGetTypeTest(instrumentID)
+    await handleGetTypeTest(null, instrumentTypeID)
 
   }
   useEffect(() => {

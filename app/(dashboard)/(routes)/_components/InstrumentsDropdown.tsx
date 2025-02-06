@@ -66,8 +66,6 @@ const Page = () => {
         setLoading(false)
     }
 
-    console.log();
-
 
     const types = typesData?.map(({ name, id }: { name: string; id: string }, idx: number) => {
         return (

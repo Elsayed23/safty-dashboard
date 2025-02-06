@@ -17,8 +17,8 @@ export const TestProvider = ({ children }) => {
 
 
 
-    const handleGetTypeTest = async (id) => {
-        const { data } = await axios.get(`/api/type_of_test?instrumentId=${id}`)
+    const handleGetTypeTest = async (instrumentId, instrumentTypeId) => {
+        const { data } = await axios.get(`/api/type_of_test?instrumentId=${instrumentId}&instrumentTypeId=${instrumentTypeId}`)
         setTypeOfTests(data)
 
     }

@@ -37,7 +37,7 @@ interface FormValues {
     isVerifiedImageRequired: boolean;
 }
 
-const CreateTestType = ({ id }: { id: string }) => {
+const CreateTestType = ({ instrumentId, instrumentTypeId }: { instrumentId: any, instrumentTypeId: any }) => {
 
     const [testEntries, setTestEntries] = useState<FormValues[]>([]);
 
@@ -49,7 +49,7 @@ const CreateTestType = ({ id }: { id: string }) => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             typeOfTestName: '',
-            testCheckName: "",
+            testCheckName: '',
             isVerifiedImageRequired: false,
         },
     });
@@ -63,7 +63,8 @@ const CreateTestType = ({ id }: { id: string }) => {
         handleCreateTypeOfText({
             name: typeOfTestName,
             testEntries,
-            instrumentId: id,
+            instrumentId,
+            instrumentTypeId
         });
         reset({ ...form.getValues(), testCheckName: '', typeOfTestName: '', isVerifiedImageRequired: false });
         setIsAddTypeOfText(false)

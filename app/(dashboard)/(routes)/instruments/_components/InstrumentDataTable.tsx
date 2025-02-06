@@ -14,6 +14,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -81,7 +82,6 @@ export const columns: ColumnDef<Instrument>[] = [
             return <div>{rowIndex + 1}</div>;
         },
     },
-
     {
         accessorKey: "customInstrumentId",
         header: ({ column }) => (
@@ -113,6 +113,35 @@ export const columns: ColumnDef<Instrument>[] = [
         header: () => <div className="text-right">Place</div>,
         cell: ({ row }) => <div className="text-right">{row.getValue("place")}</div>,
     },
+    {
+        accessorKey: "id",
+        header: () => <div className="text-right">Status</div>,
+        cell: ({ row }) => {
+            const idx = row.index;
+
+            const statusInfo = [
+                { color: "bg-red-500", text: "طالع عنيهاا" },
+                { color: "bg-yellow-500", text: "عليها ملاحظه" },
+                { color: "bg-green-500", text: "فل الفل" },
+            ];
+
+            const { color, text } = statusInfo[idx % statusInfo.length];
+
+            return (
+                <TooltipProvider delayDuration={200}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className={`ml-auto w-5 h-5 rounded-full ${color}`}></div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <span>{text}</span>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            );
+        },
+    },
+
     {
         accessorKey: "createdAt",
         header: () => <div className="text-right">Created date</div>,

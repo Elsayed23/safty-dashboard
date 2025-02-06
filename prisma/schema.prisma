@@ -164,25 +164,32 @@ model InstrumentType {
   id          String       @id @default(uuid())
   name        String
   instruments Instrument[]
+  typeOfTests TypeOfTest[] // كل نوع آلة عنده اختبارات عامة
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
 
 model TypeOfTest {
-  id           String      @id @default(uuid())
-  name         String
-  instrumentId String
-  instrument   Instrument  @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
-  testEntries  TestEntry[]
-  Test         Test[]
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id               String          @id @default(uuid())
+  name             String
+  instrumentTypeId String? // علاقة اختيارية بـ InstrumentType
+  instrumentType   InstrumentType? @relation(fields: [instrumentTypeId], references: [id], onDelete: Cascade)
+
+  instrumentId String? // علاقة اختيارية بـ Instrument
+  instrument   Instrument? @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
+
+  testEntries TestEntry[]
+  Test        Test[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([instrumentTypeId, instrumentId, name]) // منع التكرار غير المنطقي
 }
 
 model TestEntry {
   id                      String     @id @default(uuid())
   typeOfTestId            String
-  typeOfTest              TypeOfTest @relation(fields: [typeOfTestId], references: [id])
+  typeOfTest              TypeOfTest @relation(fields: [typeOfTestId], references: [id], onDelete: Cascade)
   typeOfTestName          String
   testCheckName           String
   isVerifiedImageRequired Boolean    @default(false)
@@ -205,7 +212,7 @@ model Test {
 model TestEntryCheck {
   id            String   @id @default(uuid())
   testId        String
-  test          Test     @relation(fields: [testId], references: [id])
+  test          Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
   testCheckName String
   check         Boolean
   createdAt     DateTime @default(now())
