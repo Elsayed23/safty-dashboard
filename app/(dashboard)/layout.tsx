@@ -11,6 +11,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Sidebar />
             </div>
             <main className='md:pl-56 pt-20'>
+                {/* <img src="/images/test.jpeg" alt="testt" className='absolute inset-0 w-full h-full' /> */}
                 {children}
             </main>
         </div>

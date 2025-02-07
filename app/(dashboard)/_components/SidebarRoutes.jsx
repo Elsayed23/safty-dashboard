@@ -36,7 +36,6 @@ const SidebarRoutes = () => {
             label: 'Trainings',
             href: '/trainings'
         },
-
         {
             icon: MdPeople,
             isAvtiveIcon: MdPeople,
@@ -50,8 +49,6 @@ const SidebarRoutes = () => {
             href: '/violations'
         },
     ]
-
-
 
     if (user?.role?.name === 'Admin') {
         routes.unshift({
@@ -84,13 +81,6 @@ const SidebarRoutes = () => {
             href: '/information/layout'
         }
     ]
-    // {
-    //     icon: IoLocationSharp,
-    //     isAvtiveIcon: IoLocationSharp,
-    //     label: 'Information',
-    //     href: '/information'
-    // },
-
 
     return (
         <div className='flex flex-col w-full'>
@@ -109,28 +99,35 @@ const SidebarRoutes = () => {
             </Accordion>
             {
                 routes.map((routes, idx) => {
-                    return <SideItems key={idx} {...routes} />
+                    if (routes.label === 'Trainees') {
+                        return (
+                            <>
+                                <Accordion type="single" collapsible key="info-section">
+                                    <AccordionItem value="item-1">
+                                        <AccordionTrigger className='py-0 relative hover:no-underline text-[#ec7831] px-6 hover:text-[#fe5000ce] hover:bg-[#ec7831] hover:bg-opacity-10 duration-300'>
+                                            <div className={`flex items-center gap-2  py-4`}>
+                                                <IoLocationSharp size={23} className='text-[#ec7831]' />
+                                                Information
+                                            </div>
+                                        </AccordionTrigger>
+                                        <AccordionContent className="w-full">
+                                            {
+                                                informationRoutes.map((routes, idx) => {
+                                                    return <div className="pl-4" key={idx}>
+                                                        <SideItems {...routes} />
+                                                    </div>
+                                                })
+                                            }
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                </Accordion>
+                                <SideItems key={idx} {...routes} />
+                            </>
+                        );
+                    }
+                    return <SideItems key={idx} {...routes} />;
                 })
             }
-            <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                    <AccordionTrigger className='py-0 relative hover:no-underline text-[#ec7831] px-6 hover:text-[#fe5000ce] hover:bg-[#ec7831] hover:bg-opacity-10 duration-300'>
-                        <div className={`flex items-center gap-2  py-4`}>
-                            <IoLocationSharp size={23} className='text-[#ec7831]' />
-                            Information
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="w-full">
-                        {
-                            informationRoutes.map((routes, idx) => {
-                                return <div className="pl-4">
-                                    <SideItems key={idx} {...routes} />
-                                </div>
-                            })
-                        }
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
         </div>
     )
 }
