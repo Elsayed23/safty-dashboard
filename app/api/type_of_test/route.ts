@@ -34,33 +34,31 @@ export async function GET(req: NextRequest) {
         const instrumentId = req.nextUrl.searchParams.get('instrumentId')
         const instrumentTypeId = req.nextUrl.searchParams.get('instrumentTypeId')
 
-        if (instrumentId != 'null') {
-            const typeOfTests = await db.typeOfTest.findMany({
-                where: {
-                    instrumentId: instrumentId as string
-                },
-                include: {
-                    testEntries: true,
-                    Test: true
-                }
-            })
+        const typeOfTests = await db.typeOfTest.findMany({
+            where: {
+                instrumentId,
+            },
+            include: {
+                testEntries: true,
+                Test: true
+            }
+        })
 
-            return NextResponse.json(typeOfTests)
-        } else {
-            console.log('testtt');
+        const globalTypeOfTest = await db.typeOfTest.findMany({
+            where: {
+                instrumentTypeId: instrumentTypeId
+            },
+            include: {
+                testEntries: true,
+                Test: true
+            }
+        })
 
-            const typeOfTests = await db.typeOfTest.findMany({
-                where: {
-                    instrumentTypeId: instrumentTypeId as string
-                },
-                include: {
-                    testEntries: true,
-                    Test: true
-                }
-            })
 
-            return NextResponse.json(typeOfTests)
-        }
+        // Combine both arrays
+        const combinedResults = [...typeOfTests, ...globalTypeOfTest];
+
+        return NextResponse.json(combinedResults);
 
 
 

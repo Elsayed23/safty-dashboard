@@ -32,6 +32,8 @@ model User {
   comments                  ViolationsComments[]    @relation("UserComments")
   general_data_supervisor   GeneralData[]           @relation("SupervisorData")
   general_data_site_manager GeneralData[]           @relation("SiteManagerData")
+  riskAssessmentUploader    RiskAssessment[]        @relation("uploader")
+  riskAssessmentApprover    RiskAssessment[]        @relation(name: "approver")
   createdAt                 DateTime                @default(now())
   updatedAt                 DateTime                @updatedAt
 }
@@ -141,6 +143,7 @@ model Instrument {
   externalExaminationDuration String?
   files                       InstrumentsFiles[] @relation("InstrumentFiles")
   images                      InstrumentImage[]  @relation("InstrumentImages")
+  numbersImage                String?
   createdAt                   DateTime           @default(now())
   updatedAt                   DateTime           @updatedAt
 }
@@ -164,7 +167,7 @@ model InstrumentType {
   id          String       @id @default(uuid())
   name        String
   instruments Instrument[]
-  typeOfTests TypeOfTest[] // كل نوع آلة عنده اختبارات عامة
+  typeOfTests TypeOfTest[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
@@ -227,7 +230,7 @@ model Pin {
   name      String
   data      String
   userId    String
-  user      User     @relation(fields: [userId], references: [id], name: "UserPins")
+  user      User     @relation(fields: [userId], references: [id], name: "UserPins", onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -241,4 +244,35 @@ model GeneralData {
   siteManager   User     @relation("SiteManagerData", fields: [siteManagerId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model Place {
+  id         String     @id @default(uuid())
+  name       String
+  activities Activity[]
+  createdAt  DateTime   @default(now())
+}
+
+model Activity {
+  id              String           @id @default(uuid())
+  name            String
+  placeId         String
+  place           Place            @relation(fields: [placeId], references: [id])
+  riskAssessments RiskAssessment[]
+  createdAt       DateTime         @default(now())
+}
+
+model RiskAssessment {
+  id         String   @id @default(uuid())
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id])
+  fileName   String
+  filePath   String   @db.LongText
+  uploaderId String
+  uploader   User     @relation(name: "uploader", fields: [uploaderId], references: [id])
+  approverId String?
+  approver   User?    @relation(name: "approver", fields: [approverId], references: [id])
+  status     String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

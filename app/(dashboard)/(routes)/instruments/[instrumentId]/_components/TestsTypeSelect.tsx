@@ -56,7 +56,7 @@ const TestsTypeSelect = ({ instrumentID, instrumentTypeID, test_tab }: { instrum
 
 
   const getTypeOfTestsData = async () => {
-    await handleGetTypeTest(null, instrumentTypeID)
+    await handleGetTypeTest(instrumentID, instrumentTypeID)
 
   }
   useEffect(() => {
@@ -87,7 +87,7 @@ const TestsTypeSelect = ({ instrumentID, instrumentTypeID, test_tab }: { instrum
     typeOfTests?.length
       ?
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row gap-3 w-full px-2 sm:px-5">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row gap-3 w-full">
           <FormField
             control={form.control}
             name="typeOfTest"

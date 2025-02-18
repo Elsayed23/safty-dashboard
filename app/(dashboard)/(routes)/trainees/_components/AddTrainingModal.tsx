@@ -114,7 +114,7 @@ const AddTraninings: React.FC<AddTrainingModalProps> = ({ isOpen, onClose, user_
                                 >
                                     {value
                                         ? traninings?.find((type: any) => type.id === value)?.name
-                                        : "select job title..."}
+                                        : "select training..."}
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
@@ -123,9 +123,9 @@ const AddTraninings: React.FC<AddTrainingModalProps> = ({ isOpen, onClose, user_
                                     <CommandInput
                                         onChangeCapture={(e) => {
                                             console.log(e);
-                                        }} placeholder="Search about job title..." />
+                                        }} placeholder="Search trainings..." />
                                     <CommandList>
-                                        <CommandEmpty>No job titles found.</CommandEmpty>
+                                        <CommandEmpty>No trainings found.</CommandEmpty>
                                         <CommandGroup>
                                             {traninings?.map((type: any) => (
                                                 <CommandItem

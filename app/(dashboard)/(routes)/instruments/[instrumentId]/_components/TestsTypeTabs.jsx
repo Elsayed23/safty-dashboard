@@ -65,6 +65,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
         const newNames = { ...fileNames, [fileName]: event.target.value };
         setFileNames(newNames);
     };
+    console.log(instrumentData);
 
     const handleUpload = async () => {
         const formData = new FormData();
@@ -155,7 +156,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
             </TabsContent>
             <TabsContent value="typesOfTests">
                 <Card className="flex flex-col items-center gap-9 py-3">
-                    <TestsTypeSelect instrumentID={id} />
+                    <TestsTypeSelect instrumentTypeID={instrumentData.typeId} instrumentID={id} />
                     {
                         user?.role?.name === 'Admin' || user?.role?.name === 'Engineer'
                             ?
@@ -167,7 +168,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
             </TabsContent>
             <TabsContent value="tests">
                 <Card className="flex flex-col items-center gap-4 py-3">
-                    <TestsTypeSelect instrumentID={id} test_tab={true} />
+                    <TestsTypeSelect instrumentID={id} instrumentTypeID={instrumentData.typeId} test_tab={true} />
                     {
                         testsData?.length
                             ?

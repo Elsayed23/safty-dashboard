@@ -14,15 +14,26 @@ export const POST = async (req: Request) => {
         const files = formData.getAll("images") as File[];
         const internalExaminationDuration = formData.get("internalExaminationDuration") as string || undefined;
         const externalExaminationDuration = formData.get("externalExaminationDuration") as string || undefined;
-
+        const numbersImage = formData.get('numbersImage') as File || null
         // internalExaminationDuration
         // externalExaminationDuration
+
+        let numbersImagePath = null;
+        if (numbersImage) {
+            const arrayBuffer = await numbersImage.arrayBuffer();
+            const buffer = new Uint8Array(arrayBuffer);
+            const fileName = `${Date.now()}-${numbersImage.name}`;
+            numbersImagePath = path.join('/uploads', fileName);
+            fs.writeFileSync(path.join('./public', numbersImagePath), buffer);
+        }
+
 
         // Create new instrument
         const instrument = await db.instrument.create({
             data: {
                 name,
                 typeId,
+                numbersImage: numbersImagePath,
                 place,
                 customInstrumentId,
                 internalExaminationDuration,

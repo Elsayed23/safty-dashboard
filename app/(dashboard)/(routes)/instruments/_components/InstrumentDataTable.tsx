@@ -36,7 +36,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import axios from "axios"
 import Loading from "../../../_components/Loading"
 import { useInstrument } from "@/app/context/InstrumentContext"
 import { useRouter } from "next/navigation"

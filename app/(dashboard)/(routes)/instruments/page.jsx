@@ -24,7 +24,7 @@ const page = () => {
                         Add instruments <CirclePlus size={18} />
                     </Button>
                     <Button variant='outline' onClick={() => router.push(`/instruments/type/${instrumentType}/typeoftests`)} className='flex items-center self-start gap-1'>
-                        Add type of test <CirclePlus size={18} />
+                        Add inspection form <CirclePlus size={18} />
                     </Button>
                 </div>
             }

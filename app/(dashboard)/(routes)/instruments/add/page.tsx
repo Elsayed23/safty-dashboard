@@ -53,7 +53,8 @@ const formSchema = z.object({
     place: z.string().min(1),
     customInstrumentId: z.string().min(1),
     internalExaminationDuration: z.string().min(1),
-    externalExaminationDuration: z.string().min(1)
+    externalExaminationDuration: z.string().min(1),
+    numbersImage: z.any().optional(),
 });
 
 const thumbsContainer = {
@@ -103,7 +104,8 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
             place: '',
             customInstrumentId: '',
             internalExaminationDuration: '',
-            externalExaminationDuration: ''
+            externalExaminationDuration: '',
+            numbersImage: null
         }
     });
 
@@ -146,6 +148,8 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
     }, [files]);
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        console.log(values.numbersImage);
+
         const formData = new FormData();
         formData.append('name', values.name);
         formData.append('typeId', values.typeId);
@@ -153,6 +157,7 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
         formData.append('customInstrumentId', values.customInstrumentId);
         formData.append('internalExaminationDuration', values.internalExaminationDuration);
         formData.append('externalExaminationDuration', values.externalExaminationDuration);
+        formData.append('numbersImage', values.numbersImage)
         files.forEach((file) => {
             formData.append('images', file);
         });
@@ -358,7 +363,35 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
                                     </FormItem>
                                 )}
                             />
+
+
                         </div>
+                        <FormField
+                            control={form.control}
+                            name="numbersImage"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Numbers image</FormLabel>
+                                    <Input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            // Check if a file was selected
+                                            if (event.target.files && event.target.files.length > 0) {
+                                                const file = event.target.files[0];
+                                                // Update the form state with the selected file
+                                                form.setValue('numbersImage', file);
+                                            } else {
+                                                // If no file is selected, set the value to null
+                                                form.setValue('numbersImage', null);
+                                            }
+                                        }}
+                                    />
+                                    {/* Display error message if validation fails */}
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <div className='flex justify-between items-center gap-2 mt-4'>
                             <Button onClick={() => { router.push('/instruments') }} variant='destructive'>Cancel</Button>
                             <Button

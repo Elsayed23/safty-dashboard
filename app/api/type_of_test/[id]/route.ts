@@ -1,24 +1,41 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-    req: Request,
+    req: NextRequest,
     { params }: { params: { id: string } }
 ) {
     try {
 
+        const instrumentId = await req.nextUrl.searchParams.get('instrumentId') as string
+
         const { id } = params
 
-        const instruments = await db.typeOfTest.findFirst({
+        const instrumentNumImage = await db.instrument.findUnique({
+            where: {
+                id: instrumentId
+            },
+            select: {
+                numbersImage: true
+            }
+        })
+
+        const typeOfTests = await db.typeOfTest.findFirst({
             where: {
                 id
             },
             include: {
-                testEntries: true
+                testEntries: true,
             }
         })
 
-        return NextResponse.json(instruments)
+        const resData = {
+            ...typeOfTests,
+            numbersImage: instrumentNumImage?.numbersImage
+
+        }
+
+        return NextResponse.json(resData)
 
     } catch (error) {
         console.log("[instruments]", error);

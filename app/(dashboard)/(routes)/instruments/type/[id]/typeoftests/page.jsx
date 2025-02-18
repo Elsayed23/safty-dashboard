@@ -24,7 +24,7 @@ const Page = ({ params: { id } }) => {
   }, [id])
 
   return (
-    <div>
+    <div className='p-6'>
       {user?.role?.name === 'Admin' || user?.role?.name === 'Engineer' ? (
         <>
           <CreateTestType instrumentTypeId={id} />

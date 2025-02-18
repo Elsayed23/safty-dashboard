@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import axios from 'axios'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
@@ -13,13 +14,17 @@ const Page = ({ params: { instrumentId, type_of_test_id } }) => {
     const [comments, setComments] = useState({})
     const [showCommentInput, setShowCommentInput] = useState({})
     const [images, setImages] = useState({})
+    const [numbersImage, setNumbersImage] = useState('')
 
     const router = useRouter()
 
     const getTypeOfTest = async () => {
-        const { data } = await axios.get(`/api/type_of_test/${type_of_test_id}`)
+        const { data } = await axios.get(`/api/type_of_test/${type_of_test_id}?instrumentId=${instrumentId}`)
+        setNumbersImage(data.numbersImage)
         setTest(data)
     }
+
+    console.log(test);
 
     const saveTest = async () => {
         const testEntriesChecks = test.testEntries.map(entry => ({
@@ -83,7 +88,7 @@ const Page = ({ params: { instrumentId, type_of_test_id } }) => {
     if (!test) return <Loading />
 
     return (
-        <div className='min-h-screen flex justify-center items-center bg-gray-100 px-4'>
+        <div className='min-h-screen flex justify-center flex-col gap-4 items-center bg-gray-100 px-4'>
             <div className="bg-white shadow-lg rounded-lg p-6 w-full sm:w-[400px]">
                 <h2 className='text-2xl font-semibold text-center text-gray-800 mb-6'>{test.name}</h2>
                 <ul className='space-y-6'>
@@ -127,6 +132,13 @@ const Page = ({ params: { instrumentId, type_of_test_id } }) => {
                 </ul>
                 <Button onClick={saveTest} className='mt-6 w-full bg-[#FE5000] text-white hover:bg-[#e54900]'>Save</Button>
             </div>
+            <Image
+                src={numbersImage}
+                width={500}
+                height={500}
+                alt='numbersImage'
+                className='w-[500px] h-[500px]'
+            />
         </div>
     )
 }
