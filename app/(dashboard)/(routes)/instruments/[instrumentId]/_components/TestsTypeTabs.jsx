@@ -14,7 +14,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { FaCheck, FaDownload, FaXmark } from "react-icons/fa6"
+import { FaCheck, FaDownload, FaXmark, FaImage } from "react-icons/fa6"
 import { HiMiniXMark, HiXMark } from "react-icons/hi2"
 import Link from "next/link"
 import Slider from "../../../../_components/ImagesSlider";
@@ -22,12 +22,14 @@ import { useTests } from "@/app/context/TestContext"
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/app/context/AuthContext";
 import { useInstrument } from "@/app/context/InstrumentContext";
+import { toast } from "sonner";
 
 const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
     const [files, setFiles] = useState([]);
     const [filePreviews, setFilePreviews] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [fileNames, setFileNames] = useState({});
+    const [selectedImage, setSelectedImage] = useState(null); // State to track the selected image
 
     const { user } = useAuth()
 
@@ -65,7 +67,6 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
         const newNames = { ...fileNames, [fileName]: event.target.value };
         setFileNames(newNames);
     };
-    console.log(instrumentData);
 
     const handleUpload = async () => {
         const formData = new FormData();
@@ -90,7 +91,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
                 setUploadedFiles([...uploadedFiles, ...newUploadedFiles]);
                 setFiles([]);
                 setFilePreviews([]);
-                alert('Files uploaded successfully');
+                toast.success('Files uploaded successfully');
             } else {
                 console.error(response.data.message);
             }
@@ -113,12 +114,25 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
                         {
                             testEntriesChecks?.map((check, idx) => {
                                 return (
-                                    <li key={idx} className="flex items-center justify-between gap-3 border-t border-b px-1 py-2">{check.testCheckName} {String(check.check) === 'true' ? <FaCheck size={19} /> : <FaXmark size={20} />}</li>
+                                    <li key={idx} className="flex items-center justify-between gap-3 border-t border-b px-1 py-2">
+                                        <span>{check.testCheckName}</span>
+                                        <div className="flex items-center gap-3">
+                                            {String(check.check) === 'true' ? <FaCheck size={19} /> : <FaXmark size={20} />}
+                                            {check.image && ( // Show image button if an image exists
+                                                <button
+                                                    onClick={() => setSelectedImage(check.image)} // Set the selected image
+                                                    className="p-1 hover:bg-gray-100 rounded"
+                                                >
+                                                    <FaImage size={20} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </li>
                                 )
                             })
                         }
                     </ul>
-                    <DialogFooter className="sm:justify-start">
+                    <DialogFooter>
                         <p>Date created: {new Date(createdAt).toLocaleString('en-US')}</p>
                     </DialogFooter>
                 </DialogContent>
@@ -155,7 +169,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
                 </Card>
             </TabsContent>
             <TabsContent value="typesOfTests">
-                <Card className="flex flex-col items-center gap-9 py-3">
+                <Card className="flex flex-col items-center gap-9 p-3">
                     <TestsTypeSelect instrumentTypeID={instrumentData.typeId} instrumentID={id} />
                     {
                         user?.role?.name === 'Admin' || user?.role?.name === 'Engineer'
@@ -167,7 +181,7 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
                 </Card>
             </TabsContent>
             <TabsContent value="tests">
-                <Card className="flex flex-col items-center gap-4 py-3">
+                <Card className="flex flex-col items-center gap-4 p-3">
                     <TestsTypeSelect instrumentID={id} instrumentTypeID={instrumentData.typeId} test_tab={true} />
                     {
                         testsData?.length
@@ -212,6 +226,24 @@ const TestsTypeTabs = ({ id, testsData, instrumentData, instrumentId }) => {
                     </div>
                 </Card>
             </TabsContent>
+
+            {/* Image Modal */}
+            {selectedImage && (
+                <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+                    <DialogContent className="sm:max-w-[600px]">
+                        <DialogHeader>
+                            <DialogTitle>Image Preview</DialogTitle>
+                        </DialogHeader>
+                        <div className="flex justify-center">
+                            <img
+                                src={selectedImage}
+                                alt="Inspection Image"
+                                className="w-[450px] h-[450px] rounded-lg"
+                            />
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            )}
         </Tabs>
     )
 }

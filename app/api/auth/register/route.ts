@@ -64,7 +64,7 @@ export const POST = async (req: Request) => {
                 telephone,
                 job_titleId,
                 user_photo: userPhotoPath,
-                roleId: '318d0584-542d-4068-8fd2-f606a3b0b91b'
+                roleId: '8a563fd4-226d-48a4-b0fe-752a6b8eda1a'
             },
             include: {
                 job_title: true,

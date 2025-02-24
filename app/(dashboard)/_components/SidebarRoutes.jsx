@@ -231,7 +231,7 @@ const SidebarRoutes = () => {
                                 ?
                                 <>
                                     <AddPlaceModal fetchPlaces={fetchPlaces} />
-                                    Permitsssss
+                                    {/* <p className="text-center">Permitsssss</p> */}
                                 </>
                                 :
                                 ''

@@ -31,7 +31,7 @@ const page = () => {
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-center p-6 gap-3 w-full">
         <Tabs defaultValue="All" className="justify-center w-full">
-          <TabsList className="grid w-full grid-cols-5 justify-center sm:w-3/4 md:w-[540px] lg:w-[560px] sm:mx-auto">
+          <TabsList className={`grid w-full grid-cols-${jobTitles?.length} justify-center sm:w-3/4 md:w-[540px] lg:w-4/5 sm:mx-auto`}>
             {
               jobTitles?.map(({ id, title }, idx) => {
                 return (

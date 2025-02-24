@@ -7,6 +7,8 @@ import { FileUpload } from '@/app/(dashboard)/_components/FileUpload'
 import { useAuth } from '@/app/context/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import InspectionDataTable from './_components/InspectionDataTable';
+import PersoneelDataTable from './_components/PersoneelDataTable';
 
 const Page = ({ params: { placeId, activityId } }) => {
 
@@ -66,8 +68,7 @@ const Page = ({ params: { placeId, activityId } }) => {
 
     return (
         <div className="p-6">
-            <h1 className='text-center text-2xl font-semibold'>{activityTypeData.name}</h1>
-            <h1 className="text-2xl font-bold mb-6">Permit to Work</h1>
+            <h1 className='text-center text-2xl font-semibold mb-6'>{activityTypeData.name}</h1>
             <Tabs defaultValue="risk-assessment" className="w-full">
                 {/* Tabs List */}
                 <TabsList className="grid w-full grid-cols-4">
@@ -207,27 +208,11 @@ const Page = ({ params: { placeId, activityId } }) => {
                 </TabsContent>
 
                 <TabsContent value="personeel" className="mt-4">
-                    <div className="p-4 border rounded-lg">
-                        <h2 className="text-xl font-semibold mb-4">Personeel</h2>
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-medium">Team Members</h3>
-                            <p>List of personnel involved in the activity.</p>
-                            <h3 className="text-lg font-medium">Roles and Responsibilities</h3>
-                            <p>Define the roles and responsibilities of each team member.</p>
-                        </div>
-                    </div>
+                    <PersoneelDataTable />
                 </TabsContent>
 
                 <TabsContent value="inspection" className="mt-4">
-                    <div className="p-4 border rounded-lg">
-                        <h2 className="text-xl font-semibold mb-4">Inspection</h2>
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-medium">Pre-Activity Inspection</h3>
-                            <p>Checklist for pre-activity safety inspections.</p>
-                            <h3 className="text-lg font-medium">Post-Activity Inspection</h3>
-                            <p>Checklist for post-activity safety inspections.</p>
-                        </div>
-                    </div>
+                    <InspectionDataTable />
                 </TabsContent>
             </Tabs>
         </div>

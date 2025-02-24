@@ -28,7 +28,7 @@ const Page = ({ params: { id } }) => {
       {user?.role?.name === 'Admin' || user?.role?.name === 'Engineer' ? (
         <>
           <CreateTestType instrumentTypeId={id} />
-          <h2 className="text-xl font-semibold mt-4">type of tests of this instrument type:</h2>
+          <h2 className="text-xl font-semibold mt-4 mb-2">type of tests of this instrument type: </h2>
           <TestsTypeSelect instrumentTypeID={id} test_tab={false} />
         </>
       ) : (

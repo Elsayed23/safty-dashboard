@@ -27,29 +27,40 @@ const Page = ({ params: { instrumentId, type_of_test_id } }) => {
     console.log(test);
 
     const saveTest = async () => {
-        const testEntriesChecks = test.testEntries.map(entry => ({
+        const formData = new FormData();
+
+        // Append the test data
+        formData.append('instrumentId', instrumentId);
+        formData.append('typeOfTestId', type_of_test_id);
+        formData.append('typeOfTestName', test.name);
+
+        // Append the test entries checks and comments
+        formData.append('testEntriesChecks', JSON.stringify(test.testEntries.map(entry => ({
             testCheckName: entry.testCheckName,
             check: !!selectedChecks[entry.id],
             comment: comments[entry.id] || '',
-            verifiedImage: images[entry.id] || null
-        }))
+        }))));
 
-        const data = {
-            instrumentId,
-            typeOfTestId: type_of_test_id,
-            typeOfTestName: test.name,
-            testEntriesChecks
-        }
+        // Append the images
+        Object.keys(images).forEach((key) => {
+            if (images[key]) {
+                formData.append('images', images[key]);
+            }
+        });
 
         try {
-            console.log(data)
-            // await axios.post('/api/tests', data)
-            // router.push(`/instruments/${instrumentId}`)
+            const response = await fetch('/api/tests', {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+            console.log(result);
+            router.push(`/instruments/${instrumentId}`);
         } catch (error) {
-            console.error('Error saving data:', error)
-            alert('Failed to save data.')
+            console.error('Error saving data:', error);
+            alert('Failed to save data.');
         }
-    }
+    };
 
     useEffect(() => {
         getTypeOfTest()
@@ -88,7 +99,7 @@ const Page = ({ params: { instrumentId, type_of_test_id } }) => {
     if (!test) return <Loading />
 
     return (
-        <div className='min-h-screen flex justify-center flex-col gap-4 items-center bg-gray-100 px-4'>
+        <div className='min-h-screen flex justify-center flex-col gap-4 items-center bg-gray-100 py-12 px-4'>
             <div className="bg-white shadow-lg rounded-lg p-6 w-full sm:w-[400px]">
                 <h2 className='text-2xl font-semibold text-center text-gray-800 mb-6'>{test.name}</h2>
                 <ul className='space-y-6'>
@@ -114,26 +125,24 @@ const Page = ({ params: { instrumentId, type_of_test_id } }) => {
                                     className='mt-3 border rounded-md p-2 w-full'
                                 />
                             )}
-                            {entry.isVerifiedImageRequired && (
-                                <div className="mt-3">
-                                    <Input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => handleImageUpload(entry.id, e.target.files[0])}
-                                        className='border rounded-md p-2 w-full'
-                                    />
-                                    {images[entry.id] && (
-                                        <p className='text-sm text-gray-500 mt-1'>Uploaded: {images[entry.id].name}</p>
-                                    )}
-                                </div>
-                            )}
+                            <div className="mt-3">
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleImageUpload(entry.id, e.target.files[0])}
+                                    className='border rounded-md p-2 w-full'
+                                />
+                                {images[entry.id] && (
+                                    <p className='text-sm text-gray-500 mt-1'>Uploaded: {images[entry.id].name}</p>
+                                )}
+                            </div>
                         </li>
                     ))}
                 </ul>
                 <Button onClick={saveTest} className='mt-6 w-full bg-[#FE5000] text-white hover:bg-[#e54900]'>Save</Button>
             </div>
             <Image
-                src={numbersImage}
+                src={numbersImage || ''}
                 width={500}
                 height={500}
                 alt='numbersImage'

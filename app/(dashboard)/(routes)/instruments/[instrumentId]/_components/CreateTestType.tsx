@@ -22,19 +22,19 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTests } from '@/app/context/TestContext';
 import { useRouter } from 'next/navigation';
+import { FaCheck } from 'react-icons/fa6';
+import { Label } from '@/components/ui/label';
 
 // Define the schema for the form inputs
 const formSchema = z.object({
     typeOfTestName: z.string().min(1, 'عليك إضافة حقل اسم نوع الفحص ي هندسة'),
     testCheckName: z.string().min(0, 'Please enter at least one character.'),
-    isVerifiedImageRequired: z.boolean(),
 });
 
 // Define the interface for form values based on the schema
 interface FormValues {
     typeOfTestName: string;
     testCheckName: string;
-    isVerifiedImageRequired: boolean;
 }
 
 const CreateTestType = ({ instrumentId, instrumentTypeId }: { instrumentId: any, instrumentTypeId: any }) => {
@@ -50,83 +50,70 @@ const CreateTestType = ({ instrumentId, instrumentTypeId }: { instrumentId: any,
         defaultValues: {
             typeOfTestName: '',
             testCheckName: '',
-            isVerifiedImageRequired: false,
         },
     });
 
     const { register, handleSubmit, setValue, watch, reset } = form;
 
-    const isVerifiedRequired = watch('isVerifiedImageRequired');
 
 
-    const onSubmitMainTestName = handleSubmit(({ typeOfTestName, isVerifiedImageRequired }: FormValues) => {
+    const onSubmitMainTestName = handleSubmit(({ typeOfTestName }: FormValues) => {
         handleCreateTypeOfText({
             name: typeOfTestName,
             testEntries,
             instrumentId,
             instrumentTypeId
         });
-        reset({ ...form.getValues(), testCheckName: '', typeOfTestName: '', isVerifiedImageRequired: false });
+        reset({ ...form.getValues(), testCheckName: '', typeOfTestName: '' });
         setIsAddTypeOfText(false)
         setTestEntries([])
     });
 
     const onSubmitTestChecked = handleSubmit((data: FormValues) => {
         setTestEntries(prev => [...prev, data]);
-        reset({ ...form.getValues(), testCheckName: '', isVerifiedImageRequired: false });
+        reset({ ...form.getValues(), testCheckName: '' });
         setIsAddTypeOfText(false)
     });
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" className=''>Create a inspection type</Button>
+                <Button variant="outline" className=''>Create a inspection form</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Create a inspection type</DialogTitle>
+                    <DialogTitle>Create a inspection form</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={onSubmitMainTestName} id='test' className="space-y-5">
                         <FormItem>
                             <FormLabel>Name of the inspection type</FormLabel>
                             <FormControl>
-                                <Input {...register("typeOfTestName")} placeholder="اسم نوع الفحص..." />
+                                <Input {...register("typeOfTestName")} placeholder="type of test name..." />
                             </FormControl>
                         </FormItem>
                     </form>
 
-                    <form onSubmit={onSubmitTestChecked} className='space-y-4'>
-                        <FormItem>
-                            <FormLabel>The name of the inspection to be verified</FormLabel>
-                            <div className="flex flex-col gap-2">
-                                <FormControl>
-                                    <Input {...register("testCheckName")} placeholder="اسم الفحص..." />
-                                </FormControl>
-                                <FormItem>
-                                    <div className="flex items-center gap-1">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={isVerifiedRequired}
-                                                onCheckedChange={(checked: boolean) =>
-                                                    setValue("isVerifiedImageRequired", checked)
-                                                }
-                                            />
-                                        </FormControl>
-                                        <FormLabel className='cursor-pointer'>Image verification required</FormLabel>
-                                    </div>
-                                </FormItem>
-                            </div>
-                        </FormItem>
-                        <Button type="submit">Save inspection</Button>
+                    <form onSubmit={onSubmitTestChecked} className='flex flex-col gap-2'>
+                        <Label>The name of the inspection to be verified</Label>
+                        <div className='flex items-center gap-2'>
+                            <FormControl>
+                                <Input {...register("testCheckName")} placeholder="check name..." />
+                            </FormControl>
+                            <Button type="submit" size='icon'>
+                                <FaCheck size={18} />
+                            </Button>
+                        </div>
                     </form>
 
-                    <ul>
+                    <ul className='list-disc p-[revert]'>
                         {testEntries.map((entry, index) => (
                             <li key={index}>{`${entry.testCheckName}`}</li>
                         ))}
                     </ul>
-                    <Button type="submit" form='test' className='w-full'>Save</Button>
+                    <DialogClose>
+                        <Button type="submit" form='test' className='w-full'>Save</Button>
+                    </DialogClose>
 
                 </Form>
             </DialogContent>

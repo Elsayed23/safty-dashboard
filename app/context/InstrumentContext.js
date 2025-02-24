@@ -67,7 +67,7 @@ export const InstrumentProvider = ({ children }) => {
             }
         })
         console.log(data);
-        toast.success('تم حذف المُعدة بنجاح!')
+        toast.success('The equipment has been successfully removed!')
         router.push('/instruments')
     }
 

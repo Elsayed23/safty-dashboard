@@ -264,7 +264,7 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
                                             className='mb-5'
                                             id='name'
                                             disabled={isSubmitting}
-                                            placeholder="e.g. 'جرااااااف'"
+                                            placeholder="name..."
                                             {...field}
                                         />
                                     </FormControl>
@@ -371,7 +371,7 @@ const Page = ({ searchParams: { instrument_type_id } }: { searchParams: { instru
                             name="numbersImage"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Numbers image</FormLabel>
+                                    <FormLabel>Illustrative image</FormLabel>
                                     <Input
                                         type="file"
                                         accept="image/*"

@@ -190,14 +190,13 @@ model TypeOfTest {
 }
 
 model TestEntry {
-  id                      String     @id @default(uuid())
-  typeOfTestId            String
-  typeOfTest              TypeOfTest @relation(fields: [typeOfTestId], references: [id], onDelete: Cascade)
-  typeOfTestName          String
-  testCheckName           String
-  isVerifiedImageRequired Boolean    @default(false)
-  createdAt               DateTime   @default(now())
-  updatedAt               DateTime   @updatedAt
+  id             String     @id @default(uuid())
+  typeOfTestId   String
+  typeOfTest     TypeOfTest @relation(fields: [typeOfTestId], references: [id], onDelete: Cascade)
+  typeOfTestName String
+  testCheckName  String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 }
 
 model Test {
@@ -216,8 +215,10 @@ model TestEntryCheck {
   id            String   @id @default(uuid())
   testId        String
   test          Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  comment       String?
   testCheckName String
   check         Boolean
+  image         String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
