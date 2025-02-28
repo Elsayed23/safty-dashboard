@@ -107,8 +107,8 @@ const SidebarRoutes = () => {
         {
             icon: RiOrganizationChart,
             isAvtiveIcon: RiOrganizationChart,
-            label: 'Memes & Statement',
-            href: '/information/memes'
+            label: 'Memos & Statement',
+            href: '/information/memos'
         },
         {
             icon: MdPolicy,

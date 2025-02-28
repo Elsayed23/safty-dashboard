@@ -34,6 +34,7 @@ model User {
   general_data_site_manager GeneralData[]           @relation("SiteManagerData")
   riskAssessmentUploader    RiskAssessment[]        @relation("uploader")
   riskAssessmentApprover    RiskAssessment[]        @relation(name: "approver")
+  memos                     Memo[]
   createdAt                 DateTime                @default(now())
   updatedAt                 DateTime                @updatedAt
 }
@@ -276,4 +277,15 @@ model RiskAssessment {
   status     String   @default("PENDING") // PENDING, APPROVED, REJECTED
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model Memo {
+  id        String   @id @default(uuid())
+  banner    String?
+  title     String
+  content   String   @db.LongText
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -46,3 +46,24 @@ body::after {
         --chart-5: 340 75% 55%;
     }
 }
+
+.job_desciption ul {
+    list-style: disc;
+    margin: auto;
+    padding: revert;
+}
+
+.job_desciption h1,
+.job_desciption h2,
+.job_desciption h3,
+.job_desciption h4,
+.job_desciption h5,
+.job_desciption h6 {
+    margin: auto !important;
+    font-size: revert;
+    font-weight: revert;
+}
+
+.job_desciption p {
+    margin: revert !important;
+}
