@@ -6,6 +6,15 @@ html {
     scroll-behavior: smooth;
 }
 
+::-webkit-scrollbar {
+    width: 12px;
+    /* background: #020c19; */
+}
+
+::-webkit-scrollbar-thumb {
+    /* background: #ec7831; */
+}
+
 
 /* body::before {
     content: '';

@@ -35,8 +35,17 @@ model User {
   riskAssessmentUploader    RiskAssessment[]        @relation("uploader")
   riskAssessmentApprover    RiskAssessment[]        @relation(name: "approver")
   memos                     Memo[]
+  subcontractorId           String?
+  subcontractor             Subcontractor?          @relation(fields: [subcontractorId], references: [id])
   createdAt                 DateTime                @default(now())
   updatedAt                 DateTime                @updatedAt
+}
+
+model Subcontractor {
+  id        String   @id @default(uuid())
+  name      String
+  users     User[]
+  createdAt DateTime @default(now())
 }
 
 model Supervisor {

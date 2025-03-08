@@ -27,6 +27,13 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 const formSchema = z.object({
     name: z.string().min(1, { message: "Name is required." }),
@@ -36,7 +43,8 @@ const formSchema = z.object({
     address: z.string().min(1, { message: "Address is required." }),
     telephone: z.string().min(1, { message: "Telephone is required." }),
     job_title_id: z.string(),
-    user_photo: z.any(), // No validation
+    user_photo: z.any(),
+    subcontractorId: z.string().optional()
 });
 
 const page = () => {
@@ -44,7 +52,7 @@ const page = () => {
     const router = useRouter();
     const [file, setFile] = useState<File | null>(null);
     const [job_titles, setJob_titles] = useState<any[] | null>(null)
-
+    const [subcontractor, setSubcontractor] = useState<any[] | null>(null)
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("");
 
@@ -54,8 +62,20 @@ const page = () => {
 
     }
 
+    const fetchSubcontractor = async () => {
+        try {
+
+            const { data } = await axios.get('/api/subcontractor')
+            setSubcontractor(data)
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         getJobTitles()
+        fetchSubcontractor()
     }, [])
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -69,6 +89,7 @@ const page = () => {
             telephone: '',
             job_title_id: '',
             user_photo: undefined,
+            subcontractorId: ''
         },
     });
 
@@ -83,6 +104,7 @@ const page = () => {
             formData.append('password', values.password);
             formData.append('address', values.address);
             formData.append('job_title_id', values.job_title_id);
+            formData.append('subcontractorId', values.subcontractorId || '');
             formData.append('telephone', values.telephone);
             if (file) {
                 formData.append('user_photo', file);
@@ -97,7 +119,7 @@ const page = () => {
             const { status, token, message } = data;
 
             if (status === 200) {
-                // registerUser(token);
+                registerUser(token);
                 toast.success('Successfully registered')
             } else {
                 toast.info(message);
@@ -189,6 +211,28 @@ const page = () => {
                                         <FormControl>
                                             <Input placeholder="Telephone" {...field} />
                                         </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="subcontractorId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Subcontractor</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select subcontractor" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {
+                                                    subcontractor?.map(({ id, name }) => <SelectItem value={id}>{name}</SelectItem>)
+                                                }
+                                            </SelectContent>
+                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )}

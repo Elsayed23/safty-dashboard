@@ -5,8 +5,8 @@ import { NextResponse } from 'next/server';
 const path = require('path')
 const fs = require('fs')
 
-const generateToken = (userId: string, name: string, work_id: string | null, email: string, address: string, telephone: string, supervisor: any, job_title: any, job_title_id: string | null, user_photo: string | null) => {
-    return jwt.sign({ id: userId, name, work_id, email, address, telephone, supervisor, job_title, job_title_id, user_photo }, process.env.JWT_SECRET, { expiresIn: '3d' });
+const generateToken = (userId: string, name: string, work_id: string | null, email: string, address: string, telephone: string, supervisor: any, job_title: any, job_title_id: string | null, role: any, user_photo: string | null) => {
+    return jwt.sign({ id: userId, name, work_id, email, address, telephone, supervisor, job_title, job_title_id, role, user_photo }, process.env.JWT_SECRET, { expiresIn: '3d' });
 };
 
 export const POST = async (req: Request) => {
@@ -33,6 +33,7 @@ export const POST = async (req: Request) => {
         const address = formData.get("address") as string;
         const telephone = formData.get("telephone") as string;
         const job_titleId = formData.get("job_title_id") as string;
+        const subcontractorId = formData.get('subcontractorId') as string
         const file = formData.get("user_photo") as File;
 
         // Check if user already exists
@@ -63,11 +64,13 @@ export const POST = async (req: Request) => {
                 approved: isApproved,
                 telephone,
                 job_titleId,
+                subcontractorId,
                 user_photo: userPhotoPath,
                 roleId: '8a563fd4-226d-48a4-b0fe-752a6b8eda1a'
             },
             include: {
                 job_title: true,
+                role: true,
                 supervisors: {
                     select: {
                         supervisor: {
@@ -81,7 +84,7 @@ export const POST = async (req: Request) => {
             }
         });
 
-        const token = generateToken(newUser.id, newUser.name, newUser.work_id, newUser.email, newUser.address, newUser.telephone, newUser.supervisors, newUser.job_title?.title, newUser.job_titleId, newUser.user_photo);
+        const token = generateToken(newUser.id, newUser.name, newUser.work_id, newUser.email, newUser.address, newUser.telephone, newUser.supervisors, newUser.job_title?.title, newUser.job_titleId, newUser.role?.name, newUser.user_photo);
 
         return NextResponse.json({ status: 200, message: 'Registered successfully!', token, user: newUser });
 

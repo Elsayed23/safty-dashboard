@@ -130,7 +130,7 @@ const Page = () => {
     };
 
     return (
-        <div className="p-6 h-[calc(100vh-80px)]">
+        <div className="p-6">
             <h1 className='mb-4 text-center text-4xl font-semibold'>Add new Memo</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
@@ -212,7 +212,7 @@ const Page = () => {
                             </FormItem>
                         )}
                     />
-                    <div className='flex justify-between items-center gap-2 mt-4'>
+                    <div className='flex justify-between items-center gap-2 my-4'>
                         <Button onClick={() => { router.push('/instruments') }} variant='destructive'>Cancel</Button>
                         <Button
                             type='submit'

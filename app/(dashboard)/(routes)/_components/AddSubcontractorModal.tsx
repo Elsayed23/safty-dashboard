@@ -36,7 +36,7 @@ interface FormValues {
     name: string;
 }
 
-const AddPlaceModal = ({ fetchPlaces }: any) => {
+const AddSubcontractorModal = ({ fetchSubcontractor }: any) => {
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -48,10 +48,10 @@ const AddPlaceModal = ({ fetchPlaces }: any) => {
 
     const { register, handleSubmit } = form;
 
-    const onSubmitMainTestName = handleSubmit(async ({ name }: FormValues) => {
+    const onSubmit = handleSubmit(async ({ name }: FormValues) => {
         try {
-            await axios.post('/api/places', { name })
-            fetchPlaces()
+            await axios.post('/api/subcontractor', { name })
+            fetchSubcontractor()
         } catch (error) {
             console.log(error);
         }
@@ -61,20 +61,19 @@ const AddPlaceModal = ({ fetchPlaces }: any) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className='bg-transparent justify-center w-full border-[#FE5000] text-[#FE5000] uppercase  flex items-center gap-2 hover:bg-transparent'>Add place  <CirclePlus size={18} /></Button>
+                <Button className='bg-transparent w-full border-[#FE5000] text-[#FE5000] uppercase flex items-center justify-center gap-2 hover:bg-transparent'>Add subcontractor  <CirclePlus size={18} /></Button>
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader className='flex items-center justify-between'>
-                    <DialogTitle>Add place</DialogTitle>
-
+                    <DialogTitle>Add Subcontractor</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={onSubmitMainTestName} id='test' className="space-y-5">
+                    <form onSubmit={onSubmit} id='test' className="space-y-5">
                         <FormItem>
-                            <FormLabel>Name of place</FormLabel>
+                            <FormLabel>Name of subcontractor</FormLabel>
                             <FormControl>
-                                <Input {...register("name")} placeholder="place name..." />
+                                <Input {...register("name")} placeholder="subcontractor name..." />
                             </FormControl>
                         </FormItem>
                     </form>
@@ -88,4 +87,4 @@ const AddPlaceModal = ({ fetchPlaces }: any) => {
     );
 };
 
-export default AddPlaceModal;
+export default AddSubcontractorModal;

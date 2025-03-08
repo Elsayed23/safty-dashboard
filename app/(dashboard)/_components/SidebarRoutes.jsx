@@ -23,6 +23,7 @@ import { FiLayout } from "react-icons/fi";
 import axios from "axios";
 import AddPlaceModal from "../(routes)/_components/AddPlaceModal";
 import { IoIosWarning } from "react-icons/io";
+import AddSubcontractorModal from "../(routes)/_components/AddSubcontractorModal";
 
 
 const SidebarRoutes = () => {
@@ -30,6 +31,7 @@ const SidebarRoutes = () => {
     const { user } = useAuth();
     const pathname = usePathname();
     const [places, setPlaces] = useState(null)
+    const [subcontractor, setSubcontractor] = useState(null)
 
     const fetchPlaces = async () => {
         try {
@@ -41,9 +43,20 @@ const SidebarRoutes = () => {
             console.log(error);
         }
     }
+    const fetchSubcontractor = async () => {
+        try {
+
+            const { data } = await axios.get('/api/subcontractor')
+            setSubcontractor(data)
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         fetchPlaces()
+        fetchSubcontractor()
     }, [])
 
     // Define routes
@@ -251,12 +264,43 @@ const SidebarRoutes = () => {
             )}
 
             {/* 7. Trainees */}
-            <SideItems
-                icon={MdPeople}
-                isAvtiveIcon={MdPeople}
-                label="Trainees"
-                href="/trainees"
-            />
+            <Accordion type="single" collapsible>
+                <AccordionItem value="item-3">
+                    <AccordionTrigger className='py-0 relative hover:no-underline text-[#ec7831] px-6 hover:text-[#fe5000ce] hover:bg-[#ec7831] hover:bg-opacity-10 duration-300'>
+                        <div className={`flex items-center gap-2 py-4`}>
+                            <MdPeople size={23} className='text-[#ec7831]' />
+                            Trainees
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="w-full">
+                        <ul className="flex flex-col gap-2 p-4">
+                            {
+                                subcontractor?.length
+                                    ?
+                                    subcontractor.map(({ name, id }, idx) => {
+                                        return (
+                                            <li key={idx} onClick={() => router.push(`/trainees/belogsto/${id}`)} className={`py-2 pl-6 cursor-pointer w-full rounded-sm hover:bg-black  ${pathname.includes(id) && 'bg-black bg-opacity-10'} hover:bg-opacity-10 duration-200`}>
+                                                {name}
+                                            </li>
+                                        )
+                                    })
+                                    :
+                                    <p className="text-center">There are no subcontractors.</p>
+                            }
+                        </ul>
+                        {
+                            user?.role?.name === 'Admin' || user?.role?.name === 'Engineer'
+                                ?
+                                <>
+                                    <AddSubcontractorModal fetchSubcontractor={fetchSubcontractor} />
+                                    {/* <p className="text-center">Permitsssss</p> */}
+                                </>
+                                :
+                                ''
+                        }
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
 
             {/* 8. Violations */}
             <SideItems

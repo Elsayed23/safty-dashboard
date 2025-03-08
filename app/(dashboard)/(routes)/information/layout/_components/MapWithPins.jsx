@@ -17,8 +17,11 @@ const placeOptions = [
   { type: "Meeting station", icon: "/images/Emergency-Meeting-Station.webp" },
 ];
 
+const DEFAULT_IMAGE_URL = "/images/map.jpeg"; // Replace with your default image path
+
+
 const MapWithPins = () => {
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(DEFAULT_IMAGE_URL);
   const [pins, setPins] = useState([]);
   const [isCreatingPin, setIsCreatingPin] = useState(false);
   const [newPin, setNewPin] = useState({ x: 0, y: 0, type: "", icon: "", description: "" });
@@ -123,57 +126,9 @@ const MapWithPins = () => {
 
   return (
     <div className="flex flex-col items-center gap-6 p-6">
-      {/* Drag-and-Drop Area */}
-      {showUploadInput && (
-        <div
-          className={`bg-white p-4 rounded-lg shadow-lg w-full max-w-md text-center border-2 ${isDragging ? "border-blue-500" : "border-gray-300"
-            } transition-all duration-300`}
-          onDragOver={handleDragOver}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <label
-            htmlFor="file-input"
-            className="cursor-pointer flex flex-col items-center justify-center p-6"
-          >
-            <span className="text-gray-600 font-medium">
-              Drag & Drop an image or <span className="text-blue-500">click to upload</span>
-            </span>
-            <input
-              id="file-input"
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageUpload(e.target.files[0])}
-              className="hidden"
-            />
-          </label>
-        </div>
-      )}
-
-      {/* Cancel Button to Show Upload Input Again */}
-      {!showUploadInput && (
-        <Button
-          onClick={() => {
-            setShowUploadInput(true); // Show upload input
-            setImage(null); // Clear the uploaded image
-            setPins([]); // Clear all pins
-          }}
-          variant="secondary"
-          className="w-full max-w-md"
-        >
-          Cancel
-        </Button>
-      )}
-
-      {isCreatingPin && (
-        <p className="text-blue-600 font-semibold text-lg">
-          Click on the image to add a new place.
-        </p>
-      )}
 
       {/* Display the count of each place type with icons */}
-      {image && pins.length > 0 && (
+      {pins.length > 0 && (
         <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-md">
           <h3 className="text-gray-600 font-medium mb-4">Places Added:</h3>
           <div className="flex flex-wrap gap-4">
@@ -192,61 +147,59 @@ const MapWithPins = () => {
         </div>
       )}
 
-      {image && (
-        <div className="relative w-full max-w-[650px] border-2 border-gray-300 bg-white rounded-lg shadow-lg">
-          <img
-            ref={imageRef}
-            src={image}
-            alt="Uploaded Map"
-            className="w-full h-auto cursor-pointer"
-            onClick={handleImageClick}
-          />
+      <div className="relative w-full max-w-[650px] border-2 border-gray-300 bg-white rounded-lg shadow-lg">
+        <img
+          ref={imageRef}
+          src={image}
+          alt="Uploaded Map"
+          className="w-full h-auto cursor-pointer"
+          onClick={handleImageClick}
+        />
 
-          {/* Render Pins */}
-          {pins.map((pin, index) => (
-            <div
-              key={index}
-              className="absolute cursor-pointer"
-              style={{
-                top: `${pin.y}%`,
-                left: `${pin.x}%`,
-                transform: "translate(-50%, -100%)",
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                handlePinClick(pin);
-              }}
-            >
-              <img
-                src={pin.icon}
-                alt={pin.type}
-                className="w-10 h-10 drop-shadow-lg"
-              />
-            </div>
-          ))}
+        {/* Render Pins */}
+        {pins.map((pin, index) => (
+          <div
+            key={index}
+            className="absolute cursor-pointer"
+            style={{
+              top: `${pin.y}%`,
+              left: `${pin.x}%`,
+              transform: "translate(-50%, -100%)",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePinClick(pin);
+            }}
+          >
+            <img
+              src={pin.icon}
+              alt={pin.type}
+              className="w-10 h-10 drop-shadow-lg"
+            />
+          </div>
+        ))}
 
-          {/* Pin Details Popup */}
-          {selectedPin && (
-            <div
-              className="absolute bg-white p-4 border rounded-lg shadow-lg text-sm w-48"
-              style={{
-                top: `${selectedPin.y}%`,
-                left: `${selectedPin.x}%`,
-                transform: "translate(-50%, -120%)",
-              }}
+        {/* Pin Details Popup */}
+        {selectedPin && (
+          <div
+            className="absolute bg-white p-4 border rounded-lg shadow-lg text-sm w-48"
+            style={{
+              top: `${selectedPin.y}%`,
+              left: `${selectedPin.x}%`,
+              transform: "translate(-50%, -120%)",
+            }}
+          >
+            <button
+              onClick={() => setSelectedPin(null)}
+              className="absolute top-1 right-1 p-1 rounded-full hover:bg-gray-100 transition-colors"
             >
-              <button
-                onClick={() => setSelectedPin(null)}
-                className="absolute top-1 right-1 p-1 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <IoClose className="w-4 h-4 text-gray-600" /> {/* "X" icon */}
-              </button>
-              <p className="font-bold">{selectedPin.type}</p>
-              {selectedPin.description && <p className="text-gray-600">{selectedPin.description}</p>}
-            </div>
-          )}
-        </div>
-      )}
+              <IoClose className="w-4 h-4 text-gray-600" /> {/* "X" icon */}
+            </button>
+            <p className="font-bold">{selectedPin.type}</p>
+            {selectedPin.description && <p className="text-gray-600">{selectedPin.description}</p>}
+          </div>
+        )}
+      </div>
 
       {/* Add Pin Form Dialog */}
       {isFormVisible && (

@@ -1,18 +1,21 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-    req: Request,
+    req: NextRequest,
     { params }: { params: { job_title_id: string } }
 ) {
     try {
 
         const { job_title_id } = params
-        console.log(job_title_id);
+        const belogstoId = req.nextUrl.searchParams.get('belogsto')
 
 
         if (job_title_id === 'all') {
             const user = await db.user.findMany({
+                where: {
+                    subcontractorId: belogstoId
+                },
                 include: {
                     job_title: true,
                     violations: true,
@@ -33,7 +36,8 @@ export async function GET(
         } else {
             const user = await db.user.findMany({
                 where: {
-                    job_titleId: job_title_id
+                    job_titleId: job_title_id,
+                    subcontractorId: belogstoId
                 },
                 include: {
                     job_title: true,

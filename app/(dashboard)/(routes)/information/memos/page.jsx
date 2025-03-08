@@ -48,7 +48,7 @@ const page = () => {
                                 <img
                                     src={banner}
                                     alt="Memo Banner"
-                                    className="w-full h-40 object-cover rounded-lg"
+                                    className="w-full h-40 object-fill rounded-lg"
                                 />
                             )}
                             <div className="p-4">

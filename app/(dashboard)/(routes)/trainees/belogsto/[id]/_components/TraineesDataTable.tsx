@@ -36,7 +36,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import axios from "axios"
-import Loading from "../../../_components/Loading"
+import Loading from "../../../../../_components/Loading"
 import AddTrainingModal from "./AddTrainingModal"
 import AddViolationModal from './AddViolationModal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -68,7 +68,7 @@ export type Training = {
     trainings: Abbreviation[]
 }
 
-const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
+const TraineesDataTable = ({ jobTitleId, belogstoId }: { jobTitleId: string; belogstoId: string }) => {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
 
@@ -222,7 +222,7 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             {
-                                (user?.role.name === 'Instructor' || user?.role.name === 'Admin') &&
+                                (user?.role?.name === 'Instructor' || user?.role.name === 'Admin') &&
                                 <DropdownMenuItem onClick={() => setAddTrainingModal({ status: true, user_id: training.id })}>
                                     Add training
                                 </DropdownMenuItem>
@@ -243,7 +243,7 @@ const TraineesDataTable = ({ jobTitleId }: { jobTitleId: string }) => {
 
     const getTrainings = async () => {
         try {
-            const { data } = await axios.get(`/api/users/${jobTitleId}`)
+            const { data } = await axios.get(`/api/users/${jobTitleId}?belogsto=${belogstoId}`)
             setData(data)
             console.log(data);
             setLoading(false)
